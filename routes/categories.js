@@ -1,97 +1,74 @@
-var express = require('express');
-var router = express.Router();
-let categorySchema = require('../schemas/category')
+const express = require('express');
+const router = express.Router();
+const categoryControllers = require('../controllers/categories');
+// const { check_authentication } = require("../utils/check_auth");
 
-/* GET users listing. */
-router.get('/', async function(req, res, next) {
-  let categories = await categorySchema.find({})
-  res.status(200).send({
-    success:true,
-    data:categories
-  });
-});
-router.get('/:id', async function(req, res, next) {
+// Lấy danh sách tất cả danh mục
+router.get('/', async function (req, res, next) {
   try {
-    let id = req.params.id;
-    let category = await categorySchema.findById(id)
-    res.status(200).send({
-      success:true,
-      data:category
+    let categories = await categoryControllers.getAllCategories();
+    res.send({
+      success: true,
+      data: categories
     });
   } catch (error) {
-    res.status(404).send({
-      success:false,
-      message:error.message
-    });
+    next(error);
   }
 });
-router.post('/', async function(req, res, next) {
+
+// Lấy một danh mục theo ID
+router.get('/:id', async function (req, res, next) {
   try {
-    let body = req.body;
-    let newCategory = new categorySchema({
-      name:body.name
-    });
-    await newCategory.save()
-    res.status(200).send({
-      success:true,
-      data:newCategory
-    });
-  } catch (error) {
-    res.status(404).send({
-      success:false,
-      message:error.message
-    });
-  }
-});
-router.put('/:id', async function(req, res, next) {
-  try {
-    let id = req.params.id;
-    let category = await categorySchema.findById(id);
-    if(category){
-      let body = req.body;
-      if(body.name){
-        category.name = body.name;
-      }
-      await category.save()
-      res.status(200).send({
-        success:true,
-        data:category
-      });
-    }else{
-      res.status(404).send({
-        success:false,
-        message:"ID khomng ton tai"
-      });
+    let category = await categoryControllers.getCategoryById(req.params.id);
+    if (!category) {
+      return res.status(404).send({ success: false, message: "Danh mục không tồn tại" });
     }
+    res.send({ success: true, data: category });
   } catch (error) {
-    res.status(404).send({
-      success:false,
-      message:error.message
+    next(error);
+  }
+});
+
+// Tạo mới một danh mục
+router.post('/', async function (req, res, next) {
+  try {
+    let { name, description } = req.body;
+    let newCategory = await categoryControllers.createCategory(name, description);
+    res.status(200).send({
+      success: true,
+      message: newCategory
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: error.message
     });
   }
 });
-router.delete('/:id', async function(req, res, next) {
+
+// Cập nhật danh mục
+router.put('/:id', async function (req, res, next) {
   try {
-    let id = req.params.id;
-    let category = await categorySchema.findById(id);
-    if(category){
-      category.isDeleted = true
-      await category.save()
-      res.status(200).send({
-        success:true,
-        data:category
-      });
-    }else{
-      res.status(404).send({
-        success:false,
-        message:"ID khomng ton tai"
-      });
-    }
-  } catch (error) {
-    res.status(404).send({
-      success:false,
-      message:error.message
+    let updatedCategory = await categoryControllers.updateCategory(req.params.id, req.body);
+    res.status(200).send({
+      success: true,
+      message: updatedCategory
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Xóa danh mục (soft delete)
+router.delete('/:id', async function (req, res, next) {
+  try {
+    let deletedCategory = await categoryControllers.deleteCategory(req.params.id);
+    res.status(200).send({
+      success: true,
+      message: deletedCategory
+    });
+  } catch (error) {
+    next(error);
   }
 });
 

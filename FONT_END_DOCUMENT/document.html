@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thư Viện Tài Liệu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        /* Header & Navigation */
+        .header {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-item {
+            margin-left: 1.5rem;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .nav-link i {
+            margin-right: 5px;
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid white;
+            color: white;
+            margin-left: 10px;
+        }
+        
+        .btn-outline:hover {
+            background-color: white;
+            color: var(--dark-color);
+        }
+        
+        /* Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-header h1 {
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        /* Search & Filter */
+        .search-filter {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 40px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: white;
+            min-width: 150px;
+        }
+        
+        /* PDF Grid */
+        .pdf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .pdf-item {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .pdf-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .pdf-title {
+            font-size: 1.1rem;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .pdf-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        
+        .pdf-canvas-container {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        canvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .pdf-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+        }
+        
+        .btn-view {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-view:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .rating {
+            color: var(--warning-color);
+            font-size: 0.9rem;
+        }
+        
+        .rating i {
+            margin-right: 2px;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: auto;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .close-modal:hover {
+            color: var(--dark-color);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .nav-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .nav-menu {
+                margin-top: 1rem;
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .nav-item {
+                margin: 0;
+                margin-bottom: 0.5rem;
+            }
+            
+            .user-actions {
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .search-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-book-open"></i>
+                <span>Thư Viện Tài Liệu</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Trang chủ</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Đại học</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-school"></i>
+                        <span>Trung học</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-history"></i>
+                        <span>Lịch sử tải</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-star"></i>
+                        <span>Đánh giá</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="user-actions">
+                <button class="btn btn-primary" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Đăng nhập</span>
+                </button>
+                <button class="btn btn-outline" id="register-btn">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Đăng ký</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="page-header">
+            <h1>Danh Sách Tài Liệu</h1>
+            <p>Xem trước và tải xuống các tài liệu có sẵn</p>
+        </div>
+        
+        <!-- Search & Filter -->
+        <div class="search-filter">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Tìm kiếm tài liệu...">
+            </div>
+            
+            <div class="filter-group">
+                <select class="filter-select">
+                    <option value="">Tất cả loại</option>
+                    <option value="university">Đại học</option>
+                    <option value="highschool">Trung học</option>
+                </select>
+                
+                <select class="filter-select">
+                    <option value="">Tất cả môn</option>
+                    <option value="math">Toán</option>
+                    <option value="physics">Lý</option>
+                    <option value="chemistry">Hóa</option>
+                    <option value="literature">Văn</option>
+                </select>
+                
+                <select class="filter-select">
+                    <option value="">Sắp xếp</option>
+                    <option value="popular">Phổ biến</option>
+                    <option value="newest">Mới nhất</option>
+                    <option value="rating">Đánh giá cao</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- PDF Grid -->
+        <div class="pdf-grid">
+            <!-- PDF Item 1 -->
+            <div class="pdf-item">
+                <h3 class="pdf-title">Tài liệu Toán Đại học</h3>
+                <div class="pdf-meta">
+                    <span><i class="fas fa-book"></i> Đại học</span>
+                    <span><i class="fas fa-download"></i> 124 lượt</span>
+                </div>
+                <div class="pdf-canvas-container">
+                    <canvas id="pdf-canvas-1"></canvas>
+                </div>
+                <div class="pdf-actions">
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>4.5</span>
+                    </div>
+                    <button class="btn btn-sm btn-view" data-pdf="1">
+                        <i class="fas fa-eye"></i> Xem
+                    </button>
+                </div>
+            </div>
+            
+            <!-- PDF Item 2 -->
+            <div class="pdf-item">
+                <h3 class="pdf-title">Bài tập Vật lý 12</h3>
+                <div class="pdf-meta">
+                    <span><i class="fas fa-book"></i> Trung học</span>
+                    <span><i class="fas fa-download"></i> 89 lượt</span>
+                </div>
+                <div class="pdf-canvas-container">
+                    <canvas id="pdf-canvas-2"></canvas>
+                </div>
+                <div class="pdf-actions">
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <span>4.0</span>
+                    </div>
+                    <button class="btn btn-sm btn-view" data-pdf="2">
+                        <i class="fas fa-eye"></i> Xem
+                    </button>
+                </div>
+            </div>
+            
+            <!-- PDF Item 3 -->
+            <div class="pdf-item">
+                <h3 class="pdf-title">Giáo trình Hóa hữu cơ</h3>
+                <div class="pdf-meta">
+                    <span><i class="fas fa-book"></i> Đại học</span>
+                    <span><i class="fas fa-download"></i> 156 lượt</span>
+                </div>
+                <div class="pdf-canvas-container">
+                    <canvas id="pdf-canvas-3"></canvas>
+                </div>
+                <div class="pdf-actions">
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <span>5.0</span>
+                    </div>
+                    <button class="btn btn-sm btn-view" data-pdf="3">
+                        <i class="fas fa-eye"></i> Xem
+                    </button>
+                </div>
+            </div>
+            
+            <!-- PDF Item 4 -->
+            <div class="pdf-item">
+                <h3 class="pdf-title">Văn mẫu lớp 10</h3>
+                <div class="pdf-meta">
+                    <span><i class="fas fa-book"></i> Trung học</span>
+                    <span><i class="fas fa-download"></i> 72 lượt</span>
+                </div>
+                <div class="pdf-canvas-container">
+                    <canvas id="pdf-canvas-4"></canvas>
+                </div>
+                <div class="pdf-actions">
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <span>3.0</span>
+                    </div>
+                    <button class="btn btn-sm btn-view" data-pdf="4">
+                        <i class="fas fa-eye"></i> Xem
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Thư Viện Tài Liệu</h3>
+                <p>Nền tảng chia sẻ tài liệu học tập chất lượng cho sinh viên và học sinh.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Liên kết</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Trang chủ</a></li>
+                    <li><a href="#">Đại học</a></li>
+                    <li><a href="#">Trung học</a></li>
+                    <li><a href="#">Đăng ký</a></li>
+                    <li><a href="#">Đăng nhập</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Hỗ trợ</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Câu hỏi thường gặp</a></li>
+                    <li><a href="#">Hướng dẫn sử dụng</a></li>
+                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="#">Điều khoản dịch vụ</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Liên hệ</h3>
+                <ul class="footer-links">
+                    <li><i class="fas fa-envelope"></i> contact@thuvientailieu.com</li>
+                    <li><i class="fas fa-phone"></i> (0123) 456 789</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Hà Nội, Việt Nam</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 Thư Viện Tài Liệu. Tất cả quyền được bảo lưu.</p>
+        </div>
+    </footer>
+    
+    <!-- PDF Viewer Modal -->
+    <div class="modal" id="pdf-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title">Xem tài liệu</h2>
+            <div class="pdf-viewer-container" style="width: 100%; height: 70vh; margin-top: 1rem;">
+                <canvas id="pdf-modal-canvas"></canvas>
+            </div>
+            <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <button class="btn btn-sm btn-outline" id="prev-page">
+                        <i class="fas fa-arrow-left"></i> Trang trước
+                    </button>
+                    <span id="page-num" style="margin: 0 1rem;">Trang 1/10</span>
+                    <button class="btn btn-sm btn-outline" id="next-page">
+                        Trang sau <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                <button class="btn btn-sm btn-primary" id="download-pdf">
+                    <i class="fas fa-download"></i> Tải xuống
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-modal">&times;</span>
+            <h2>Đăng nhập</h2>
+            <form style="margin-top: 1.5rem;">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem;">Email</label>
+                    <input type="email" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem;">Mật khẩu</label>
+                    <input type="password" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                </button>
+            </form>
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <p>Chưa có tài khoản? <a href="#" id="show-register" style="color: var(--primary-color);">Đăng ký ngay</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Register Modal -->
+    <div class="modal" id="register-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-modal">&times;</span>
+            <h2>Đăng ký tài khoản</h2>
+            <form style="margin-top: 1.5rem;">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem;">Họ và tên</label>
+                    <input type="text" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem;">Email</label>
+                    <input type="email" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem;">Mật khẩu</label>
+                    <input type="password" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-user-plus"></i> Đăng ký
+                </button>
+            </form>
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <p>Đã có tài khoản? <a href="#" id="show-login" style="color: var(--primary-color);">Đăng nhập ngay</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script>
+        // Khởi tạo PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+        
+        // Danh sách các PDF cần hiển thị (có thể thay đổi đường dẫn)
+        const pdfFiles = [
+            { id: 'pdf-canvas-1', url: './toan-dai-hoc.pdf', title: 'Tài liệu Toán Đại học' },
+            { id: 'pdf-canvas-2', url: './vat-ly-12.pdf', title: 'Bài tập Vật lý 12' },
+            { id: 'pdf-canvas-3', url: './hoa-huu-co.pdf', title: 'Giáo trình Hóa hữu cơ' },
+            { id: 'pdf-canvas-4', url: './van-mau-10.pdf', title: 'Văn mẫu lớp 10' }
+        ];
+
+        // Biến cho PDF viewer modal
+        let currentPdf = null;
+        let currentPage = 1;
+        let pdfDoc = null;
+        const modalCanvas = document.getElementById('pdf-modal-canvas');
+        const ctx = modalCanvas.getContext('2d');
+
+        // Hàm hiển thị PDF thumbnail
+        function renderPDFThumbnail(pdfItem) {
+            const canvas = document.getElementById(pdfItem.id);
+            const ctx = canvas.getContext('2d');
+            
+            pdfjsLib.getDocument(pdfItem.url).promise.then(pdf => {
+                pdf.getPage(1).then(page => {
+                    const viewport = page.getViewport({ scale: 1.0 });
+                    
+                    // Điều chỉnh kích thước canvas
+                    const container = canvas.parentElement;
+                    const containerWidth = container.clientWidth;
+                    const containerHeight = container.clientHeight;
+                    
+                    // Tính scale phù hợp
+                    const scale = Math.min(
+                        containerWidth / viewport.width,
+                        containerHeight / viewport.height
+                    );
+                    
+                    const scaledViewport = page.getViewport({ scale });
+                    
+                    canvas.height = scaledViewport.height;
+                    canvas.width = scaledViewport.width;
+
+                    const renderContext = {
+                        canvasContext: ctx,
+                        viewport: scaledViewport
+                    };
+
+                    page.render(renderContext);
+                });
+            }).catch(error => {
+                console.error('Lỗi khi tải PDF:', error);
+                canvas.style.backgroundColor = '#f8f8f8';
+                ctx.fillStyle = '#999';
+                ctx.font = '14px Arial';
+                ctx.fillText('Không thể tải PDF', 10, 20);
+            });
+        }
+
+        // Hàm hiển thị PDF trong modal
+        function renderPDFModal(pdfUrl, title) {
+            const modal = document.getElementById('pdf-modal');
+            document.getElementById('modal-title').textContent = title;
+            
+            pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
+                pdfDoc = pdf;
+                currentPage = 1;
+                currentPdf = pdfUrl;
+                renderPage(currentPage);
+                
+                // Cập nhật số trang
+                document.getElementById('page-num').textContent = 
+                    `Trang ${currentPage}/${pdfDoc.numPages}`;
+                
+                // Hiển thị modal
+                modal.style.display = 'flex';
+            }).catch(error => {
+                console.error('Lỗi khi tải PDF:', error);
+                alert('Không thể tải tài liệu. Vui lòng thử lại sau.');
+            });
+        }
+
+        // Hàm hiển thị trang cụ thể
+        function renderPage(pageNum) {
+            pdfDoc.getPage(pageNum).then(page => {
+                const viewport = page.getViewport({ scale: 1.5 });
+                
+                // Điều chỉnh kích thước canvas
+                const container = document.querySelector('.pdf-viewer-container');
+                const containerWidth = container.clientWidth;
+                const scale = containerWidth / viewport.width;
+                const scaledViewport = page.getViewport({ scale });
+                
+                modalCanvas.height = scaledViewport.height;
+                modalCanvas.width = scaledViewport.width;
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: scaledViewport
+                };
+
+                page.render(renderContext);
+            });
+        }
+
+        // Sự kiện click nút xem PDF
+        document.querySelectorAll('.btn-view').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const pdfIndex = parseInt(this.getAttribute('data-pdf')) - 1;
+                const pdfItem = pdfFiles[pdfIndex];
+                renderPDFModal(pdfItem.url, pdfItem.title);
+            });
+        });
+
+        // Sự kiện nút trang trước/sau
+        document.getElementById('prev-page').addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage(currentPage);
+                document.getElementById('page-num').textContent = 
+                    `Trang ${currentPage}/${pdfDoc.numPages}`;
+            }
+        });
+
+        document.getElementById('next-page').addEventListener('click', function() {
+            if (currentPage < pdfDoc.numPages) {
+                currentPage++;
+                renderPage(currentPage);
+                document.getElementById('page-num').textContent = 
+                    `Trang ${currentPage}/${pdfDoc.numPages}`;
+            }
+        });
+
+        // Sự kiện nút tải xuống
+        document.getElementById('download-pdf').addEventListener('click', function() {
+            if (currentPdf) {
+                const link = document.createElement('a');
+                link.href = currentPdf;
+                link.download = currentPdf.split('/').pop();
+                link.click();
+            }
+        });
+
+        // Sự kiện đóng modal
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            });
+        });
+
+        // Sự kiện click bên ngoài modal để đóng
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+        });
+
+        // Sự kiện đăng nhập/đăng ký
+        document.getElementById('login-btn').addEventListener('click', function() {
+            document.getElementById('login-modal').style.display = 'flex';
+        });
+
+        document.getElementById('register-btn').addEventListener('click', function() {
+            document.getElementById('register-modal').style.display = 'flex';
+        });
+
+        document.getElementById('show-register').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('login-modal').style.display = 'none';
+            document.getElementById('register-modal').style.display = 'flex';
+        });
+
+        document.getElementById('show-login').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('register-modal').style.display = 'none';
+            document.getElementById('login-modal').style.display = 'flex';
+        });
+
+        // Hiển thị tất cả PDF thumbnail khi trang tải xong
+        window.addEventListener('DOMContentLoaded', () => {
+            pdfFiles.forEach(renderPDFThumbnail);
+        });
+    </script>
+</body>
+</html>

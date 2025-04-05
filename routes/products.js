@@ -1,5 +1,6 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express'); // Import express trước
+const router = express.Router();    // Sau đó mới sử dụng express.Router()
+
 let productSchema = require('../schemas/product')
 let categorySchema = require('../schemas/category')
 /* GET users listing. */

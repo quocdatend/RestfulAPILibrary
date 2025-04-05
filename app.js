@@ -4,13 +4,15 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose')
+const cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
 
-mongoose.connect('mongodb://localhost:27017/S2');
+app.use(cors());
+mongoose.connect('mongodb://127.0.0.1:27017/document');
 mongoose.connection.on('connected',()=>{
   console.log('connected');
 })
@@ -31,8 +33,8 @@ app.use('/users', usersRouter);
 app.use('/roles', require('./routes/roles'));
 app.use('/auth', require('./routes/auth'));
 app.use('/products', require('./routes/products'));
-app.use('/categories', require('./routes/categories'));
-// catch 404 and forward to error handler
+app.use('/categories', require('./routes/categories.js'));
+app.use('/documents', require('./routes/documents'));
 app.use(function(req, res, next) {
   next(createError(404));
 });
