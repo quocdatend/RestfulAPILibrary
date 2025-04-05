@@ -5,9 +5,9 @@ const documentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    category_id: {  // Thay subject_id thành category_id
+    category_id: {  
         type: mongoose.Types.ObjectId,
-        ref: 'category',  // Đảm bảo tên model đúng là 'Category'
+        ref: 'Category',  
         required: true
     },
     user_id: {

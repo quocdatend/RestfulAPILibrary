@@ -1,4 +1,5 @@
 const Document = require('../schemas/document');
+const Category = require('../schemas/category')
 // 🟢 Tạo mới document
 exports.createDocument = async (req, res) => {
     try {
@@ -22,7 +23,7 @@ exports.createDocument = async (req, res) => {
 exports.getAllDocuments = async (req, res) => {
     try {
         const documents = await Document.find({ isDeleted: false })
-            .populate('category_id', 'name description');  // Lấy thông tin user
+            .populate('category_id', 'name description');  
 
         res.status(200).json({ success: true, data: documents });
     } catch (error) {
@@ -84,7 +85,6 @@ exports.deleteDocument = async (req, res) => {
         if (!document) {
             return res.status(404).json({ message: 'Không tìm thấy tài liệu' });
         }
-
         res.status(200).json({ message: 'Tài liệu đã được xóa', document });
     } catch (error) {
         console.error('Lỗi khi xóa tài liệu:', error);
