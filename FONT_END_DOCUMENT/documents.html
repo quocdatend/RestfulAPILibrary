@@ -275,37 +275,39 @@
       container.innerHTML = '';
       
       documents.forEach(doc => {
-        const docElement = document.createElement('div');
-        docElement.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow';
-        
-        docElement.innerHTML = `
-          <div class="p-6">
-            <div class="mb-4 thumbnail-container">
-              <!-- Thumbnail hoặc logo PDF sẽ được chèn vào đây -->
-              <canvas class="hidden"></canvas>
-            </div>
-            <h3 class="text-xl font-bold mb-2 text-gray-800">${doc.title}</h3>
-            <div class="flex flex-wrap items-center text-gray-600 text-sm mb-4">
-              <span class="flex items-center mr-4 mb-2 sm:mb-0">
-                <i class="fas fa-book mr-1"></i> ${doc.category_id?.name || 'Không có danh mục'}
-              </span>
-              <span class="flex items-center">
-                <i class="fas fa-calendar mr-1"></i> ${new Date(doc.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-            <div class="mt-4">
-              <button class="view-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center" 
-                      data-url="${doc.file_url}" data-title="${doc.title}">
-                <i class="fas fa-eye mr-2"></i> Xem
-              </button>
-            </div>
-          </div>
-        `;
-        
-        container.appendChild(docElement);
-        // Sau khi thêm phần tử, tạo thumbnail cho PDF
-        generateThumbnail(doc.file_url, docElement.querySelector('.thumbnail-container'));
-      });
+  const docElement = document.createElement('div');
+  docElement.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow';
+
+  docElement.innerHTML = `
+    <div class="p-6">
+      <div class="mb-4 thumbnail-container">
+        <!-- Thumbnail hoặc logo PDF sẽ được chèn vào đây -->
+        <canvas class="hidden"></canvas>
+      </div>
+      <h3 class="text-xl font-bold mb-2 text-gray-800">${doc.title}</h3>
+      <div class="flex flex-wrap items-center text-gray-600 text-sm mb-4">
+        <span class="flex items-center mr-4 mb-2 sm:mb-0">
+          <i class="fas fa-book mr-1"></i> ${doc.category_id?.name || 'Không có danh mục'}
+        </span>
+        <span class="flex items-center">
+          <i class="fas fa-calendar mr-1"></i> ${new Date(doc.createdAt).toLocaleDateString()}
+        </span>
+      </div>
+      <div class="mt-4">
+        <a href="/FONT_END_DOCUMENT/document.html?id=${doc._id}" 
+           class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center">
+          <i class="fas fa-eye mr-2"></i> Xem
+        </a>
+      </div>
+    </div>
+  `;
+
+  container.appendChild(docElement);
+
+  // Tạo thumbnail cho PDF
+  generateThumbnail(doc.file_url, docElement.querySelector('.thumbnail-container'));
+});
+
       
       // Thêm sự kiện click cho các nút xem
       document.querySelectorAll('.view-btn').forEach(btn => {
