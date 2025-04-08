@@ -17,4 +17,6 @@ router.put('/:id', documentController.updateDocument);
 // 🟢 Xóa tài liệu (soft delete)
 router.delete('/:id', documentController.deleteDocument);
 
+router.get('/documents/category/:category_id', documentController.getDocumentsByCategory);
+
 module.exports = router;
