@@ -1,0 +1,220 @@
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --background-color: #f9f9f9;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --border-color: #e0e0e0;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+  }
+
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+
+  .back-button i {
+    margin-right: 8px;
+  }
+
+  .back-button:hover {
+    color: var(--primary-color);
+  }
+
+  .document-container {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .document-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .document-info {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    height: fit-content;
+  }
+
+  .document-title {
+    font-size: 1.8rem;
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+    word-break: break-word;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+  }
+
+  .info-row i {
+    width: 20px;
+    margin-right: 10px;
+    color: var(--primary-color);
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+  }
+
+  .stars {
+    color: #f1c40f;
+    margin-right: 10px;
+  }
+
+  .description {
+    margin: 15px 0;
+    padding: 15px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .download-btn {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 15px;
+    transition: background-color 0.3s;
+  }
+
+  .download-btn:hover {
+    background-color: #2980b9;
+  }
+
+  .document-viewer {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .viewer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: var(--secondary-color);
+    color: white;
+  }
+
+  .viewer-controls {
+    display: flex;
+    gap: 15px;
+  }
+
+  .viewer-controls button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+
+  .viewer-controls button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .iframe-container {
+    flex-grow: 1;
+    background-color: #f0f0f0;
+    position: relative;
+  }
+
+  #document-frame {
+    border: none;
+    width: 100%;
+    height: 100%;
+  }
+
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid var(--primary-color);
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .unsupported-format {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .unsupported-format i {
+    font-size: 3rem;
+    color: #e74c3c;
+    margin-bottom: 15px;
+  }
