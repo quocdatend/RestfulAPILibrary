@@ -434,77 +434,82 @@
     }
 
     if (documentId) {
-      fetch(`http://localhost:3000/documents/${documentId}`)
-        .then(response => response.json())
-        .then(responseData => {
-          // Access the 'data' object from the API response
-          const data = responseData.data;
-          
-          // Check if 'data' exists before accessing its properties
-          if (data) {
-            const fileUrl = data.file_url || '';
-            const fileExtension = getFileExtension(fileUrl);
-            
-            const documentData = {
-              url: fileUrl,
-              title: data.title || 'Untitled Document',
-              pages: data.pages || 'Not available',
-              downloads: data.downloads || 'Not available',
-              date: data.createdAt ? new Date(data.createdAt).toLocaleDateString() : 'Not available',
-              rating: data.rating_avg || 0,
-              description: data.description || 'No description available'
-            };
-            
-            // Update the DOM with this data
-            document.getElementById('document-title').textContent = documentData.title;
-            document.getElementById('viewer-filename').textContent = documentData.title;
-            document.getElementById('document-rating').textContent = `${documentData.rating} / 5`;
-            document.getElementById('document-rating-stars').innerHTML = generateStarRating(documentData.rating);
-            document.getElementById('document-date').textContent = `Created: ${documentData.date}`;
-            document.getElementById('document-pages').textContent = `Pages: ${documentData.pages}`;
-            document.getElementById('document-downloads').textContent = `Downloads: ${documentData.downloads}`;
-            document.getElementById('document-description').textContent = documentData.description;
-            
-            // Set download link
-            document.getElementById('document-download-link').href = documentData.url;
-            document.getElementById('document-download-link').title = `Download ${documentData.title}`;
-            
-            // Set up the document viewer
-            const viewerUrl = getViewerUrl(documentData.url, fileExtension);
-            if (viewerUrl) {
-              document.getElementById('document-frame').src = viewerUrl;
-            } else {
-              showUnsupportedFormat(fileExtension);
-            }
-          } else {
-            console.error('No document data found.');
-            document.getElementById('document-title').textContent = 'Document not found';
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching document data:', error);
-          document.getElementById('document-title').textContent = 'Error loading document';
-        })
-        .finally(() => {
-          // Handle iframe load events
-          const iframe = document.getElementById('document-frame');
-          const loadingOverlay = document.getElementById('loading-overlay');
-          
-          iframe.onload = function() {
-            loadingOverlay.style.display = 'none';
-          };
-          
-          iframe.onerror = function() {
-            loadingOverlay.innerHTML = `
-              <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: #e74c3c; margin-bottom: 10px;"></i>
-              <p>Failed to load document</p>
-            `;
-          };
-        });
-    } else {
-      console.error('No document ID found in the URL.');
-      document.getElementById('document-title').textContent = 'No document ID provided';
-    }
+  fetch(`http://localhost:3000/documents/${documentId}`)
+    .then(response => response.json())
+    .then(responseData => {
+      const data = responseData.data;
+      
+      if (data) {
+        // Cloudinary file URL
+        const fileUrl = data.file_url || '';
+        const fileExtension = getFileExtension(fileUrl);
+
+        const documentData = {
+    url: data.file_url || 'Not available',
+    title: data.title || 'Untitled Document',
+    fileSize: data.file_size || 0,
+    fileType: data.file_type || 'Unknown',
+    educationLevel: data.education_level || 'Not specified',
+    categoryId: data.category_id || 'Not assigned',
+    userId: data.user_id || 'Unknown user',
+    downloads: data.download_count || 0,
+    views: data.views || 0,
+    date: data.createdAt ? new Date(data.createdAt).toLocaleDateString() : 'Not available',
+    rating: data.rating_avg || 0,
+    description: data.description || 'No ',
+    tags: data.tags && data.tags.length > 0 ? data.tags : ['None'],
+    status: data.status || 'Unknown'
+};
+console.log('Document Data:', documentData);
+        // Update the DOM
+        document.getElementById('document-title').textContent = documentData.title;
+        document.getElementById('viewer-filename').textContent = documentData.title;
+        document.getElementById('document-rating').textContent = `${documentData.rating} / 5`;
+        document.getElementById('document-rating-stars').innerHTML = generateStarRating(documentData.rating);
+        document.getElementById('document-date').textContent = `Created: ${documentData.date}`;
+        document.getElementById('document-pages').textContent = `Pages: ${documentData.pages}`;
+        document.getElementById('document-downloads').textContent = `Downloads: ${documentData.downloads}`;
+        document.getElementById('document-description').textContent = documentData.description;
+
+        // Set download link to Cloudinary file
+        document.getElementById('document-download-link').href = documentData.url;
+        document.getElementById('document-download-link').title = `Download ${documentData.title}`;
+
+        // Set iframe source to view the Cloudinary PDF
+        const viewerUrl = getViewerUrl(documentData.url, fileExtension);
+        if (viewerUrl) {
+          document.getElementById('document-frame').src = viewerUrl;
+        } else {
+          showUnsupportedFormat(fileExtension);
+        }
+      } else {
+        console.error('No document data found.');
+        document.getElementById('document-title').textContent = 'Document not found';
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching document data:', error);
+      document.getElementById('document-title').textContent = 'Error loading document';
+    })
+    .finally(() => {
+      const iframe = document.getElementById('document-frame');
+      const loadingOverlay = document.getElementById('loading-overlay');
+
+      iframe.onload = function() {
+        loadingOverlay.style.display = 'none';
+      };
+
+      iframe.onerror = function() {
+        loadingOverlay.innerHTML = `
+          <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: #e74c3c; margin-bottom: 10px;"></i>
+          <p>Failed to load document</p>
+        `;
+      };
+    });
+} else {
+  console.error('No document ID found in the URL.');
+  document.getElementById('document-title').textContent = 'No document ID provided';
+}
 
     // Add functionality to viewer controls
     document.getElementById('zoom-in').addEventListener('click', function() {
