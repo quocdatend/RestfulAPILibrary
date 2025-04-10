@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const transporter = nodemailer.createTransport({
     host: "sandbox.smtp.mailtrap.io",
-    port: dotenv.config().parsed.MAIL_PORT,
+    port: 587,
     secure: false, // true for port 465, false for other ports
     auth: {
         user: dotenv.config().parsed.MAIL_USER, 
@@ -14,9 +14,9 @@ const transporter = nodemailer.createTransport({
 module.exports = {
     send: async function (to,url) {
         return await transporter.sendMail({
-            from: "HE THONG CUA TUNG",
+            from: "HE THONG QUAN LY THU VIEN",
             to: to,
-            subject: "THU MOI THAM GIA VIEC NHE VOLT CAO",
+            subject: "RESET MAT KHAU",
             html: `<a href=${url}>CLICK VAO DAY DE RESET MAT KHAU</a>`, 
         });
     }
