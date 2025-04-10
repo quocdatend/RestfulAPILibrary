@@ -116,7 +116,6 @@
           showToast("error", "Please fill in all fields.");
           return;
         }
-
         try {
           const res = await fetch("http://localhost:3000/auth/login", {
             method: "POST",
@@ -127,13 +126,12 @@
           });
 
           const data = await res.json();
-
           if (res.ok) {
             if (data.data) {
               localStorage.setItem("token", data.data);
             }
             showToast("success", "Login successful!");
-            window.location.href = 'http://127.0.0.1:5501/FONT_END_DOCUMENT/Documents/documents.html';
+            window.location.href = '../Documents/documents.html';
           } else {
             showToast("error", data.message || "Login failed");
           }
