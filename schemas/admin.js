@@ -1,10 +1,10 @@
 let mongoose = require('mongoose');
 let bcrypt = require('bcrypt')
 
-let userSchema = new mongoose.Schema({
-    username: {
+let adminSchema = new mongoose.Schema({
+    name: {
         type: String,
-        unique: [true, "username da ton tai"],
+        unique: [true, "name da ton tai"],
         required: true
     },
     password: {
@@ -30,7 +30,7 @@ let userSchema = new mongoose.Schema({
     timestamps: true
 })
 
-userSchema.pre('save', function (next) {
+adminSchema.pre('save', function (next) {
     if (this.isModified('password')) {
         let salt = bcrypt.genSaltSync(10);
         let hash = bcrypt.hashSync(this.password, salt);
@@ -39,4 +39,4 @@ userSchema.pre('save', function (next) {
     next();
 })
 
-module.exports = mongoose.model('user', userSchema)
+module.exports = mongoose.model('admin', adminSchema)

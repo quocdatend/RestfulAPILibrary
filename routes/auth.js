@@ -2,72 +2,23 @@ var express = require('express');
 var router = express.Router();
 let userControllers = require('../controllers/users')
 let { check_authentication } = require("../utils/check_auth")
-let jwt = require('jsonwebtoken');
-let constants = require('../utils/constants')
+let { validate, UserValidation } = require('../utils/validator')
+let authControllers = require('../controllers/auth')
 
-router.post('/login', async function (req, res, next) {
-    try {
-        let username = req.body.username;
-        let password = req.body.password;
-        let result = await userControllers.checkLogin(username, password);
-        let exp = new Date(Date.now() + 3600 * 1000)
-        let token = jwt.sign({
-            id: result,
-            expireIn: exp.getTime()
-        },constants.SECRET_KEY)
-        res.cookie(
-            'token', token,{
-                httpOnly:true,
-                expires:exp,
-                signed:true
-            }
-        )
-        res.status(200).send({
-            success: true,
-            data: token
-        })
-    } catch (error) {
-        next(error)
-    }
-});
-router.post('/signup', async function (req, res, next) {
-    try {
-        let username = req.body.username;
-        let password = req.body.password;
-        let email = req.body.email;
-        let result = await userControllers.createAnUser(username, password,
-            email, 'user');
-        res.status(200).send({
-            success: true,
-            data: result
-        })
-    } catch (error) {
-        next(error)
-    }
-});
-router.get('/me', check_authentication, async function (req, res, next) {
-    try {
-        res.send({
-            success: true,
-            data: req.user
-        });
-    } catch (error) {
-        next(error)
-    }
-});
-router.post('/changepassword', check_authentication, async function (req, res, next) {
-    try {
-        let oldpassword = req.body.oldpassword;
-        let newpassword = req.body.newpassword;
-        let user = userControllers.changePassword(req.user, oldpassword, newpassword);
-        res.send({
-            success: true,
-            data: user
-        });
+//logout
+router.get('/logout', check_authentication, authControllers.logout);
 
-    } catch (error) {
-        next(error)
-    }
-});
+router.post('/login', UserValidation, validate, authControllers.login);
+
+router.post('/signup', UserValidation, validate, authControllers.signup);
+
+router.get('/me', check_authentication, authControllers.me);
+
+router.post('/changepassword', check_authentication, authControllers.changePassword);
+
+router.post('/forgotpassword', authControllers.forgotPassword);
+
+router.post('/resetpassword/:token', authControllers.resetPassword);
+//dien email
 
 module.exports = router
