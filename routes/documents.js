@@ -16,6 +16,6 @@ router.put('/:id', documentController.updateDocument);
 // Soft delete a document by ID
 router.delete('/:id', documentController.deleteDocument);
 
-router.get('/documents/category/:category_id', documentController.getDocumentsByCategory);
+router.get('/category/:category_id', documentController.getDocumentsByCategory);
 
 module.exports = router;
