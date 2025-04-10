@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quản lý Cấp học</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-4 text-center text-blue-600">Quản lý Cấp học</h1>
+
+    <!-- Form thêm/sửa -->
+    <form id="educationForm" class="mb-6">
+      <div class="mb-2">
+        <label class="block font-semibold">Tên cấp học:</label>
+        <select id="name" class="w-full border rounded px-3 py-2">
+          <option value="">-- Chọn --</option>
+          <option value="grade2">Grade 2</option>
+          <option value="grade3">Grade 3</option>
+          <option value="university">University</option>
+          <option value="none">None</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="block font-semibold">Danh sách môn học (phân cách bởi dấu phẩy):</label>
+        <input type="text" id="subjects" class="w-full border rounded px-3 py-2" placeholder="VD: Math, Physics, Biology"/>
+      </div>
+      <input type="hidden" id="editingId" />
+      <div class="flex gap-4 mt-4">
+        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+          Lưu
+        </button>
+        <button type="button" onclick="resetForm()" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded">
+          Hủy
+        </button>
+      </div>
+    </form>
+
+    <!-- Danh sách -->
+    <div id="educationList" class="space-y-4"></div>
+  </div>
+
+  <script>
+    const apiUrl = "http://localhost:3000/educations";
+
+    async function fetchEducations() {
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+      const listEl = document.getElementById("educationList");
+      listEl.innerHTML = "";
+
+      data.forEach(level => {
+        const subjects = (level.subjects || []).map(s => s.name).join(", ");
+        listEl.innerHTML += `
+          <div class="border p-4 rounded shadow-sm bg-gray-50">
+            <div class="flex justify-between items-center">
+              <div>
+                <h2 class="text-lg font-bold text-blue-700">${level.name}</h2>
+                <p class="text-sm text-gray-600">Môn học: ${subjects || "Không có"}</p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick='editEducation(${JSON.stringify(level)})' class="text-white bg-yellow-500 px-3 py-1 rounded hover:bg-yellow-600">Sửa</button>
+                <button onclick='deleteEducation("${level._id}")' class="text-white bg-red-500 px-3 py-1 rounded hover:bg-red-600">Xóa</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    async function createOrUpdateEducation(e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const subjectsInput = document.getElementById("subjects").value;
+      const editingId = document.getElementById("editingId").value;
+
+      if (!name || !subjectsInput.trim()) {
+        alert("Vui lòng điền đầy đủ thông tin.");
+        return;
+      }
+
+      const subjects = subjectsInput.split(",").map(s => s.trim()).filter(Boolean);
+
+      const method = editingId ? "PUT" : "POST";
+      const url = editingId ? `${apiUrl}/${editingId}` : `${apiUrl}/create`;
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, subjects })
+      });
+
+      if (res.ok) {
+        await fetchEducations();
+        resetForm();
+      } else {
+        const err = await res.json();
+        alert("Lỗi: " + err.message);
+      }
+    }
+
+    function editEducation(level) {
+      document.getElementById("name").value = level.name;
+      document.getElementById("subjects").value = (level.subjects || []).map(s => s.name).join(", ");
+      document.getElementById("editingId").value = level._id;
+    }
+
+    function resetForm() {
+      document.getElementById("educationForm").reset();
+      document.getElementById("editingId").value = "";
+    }
+
+    async function deleteEducation(id) {
+      if (!confirm("Bạn có chắc chắn muốn xóa cấp học này?")) return;
+      await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
+      await fetchEducations();
+    }
+
+    document.getElementById("educationForm").addEventListener("submit", createOrUpdateEducation);
+    fetchEducations();
+  </script>
+</body>
+</html>
