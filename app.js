@@ -32,6 +32,8 @@ app.use('/auth', require('./routes/auth'));
 app.use('/products', require('./routes/products'));
 app.use('/categories', require('./routes/categories.js'));
 app.use('/documents', require('./routes/documents'));
+app.use('/educations', require('./routes/educations'));
+
 app.use(function(req, res, next) {
   next(createError(404));
 });
