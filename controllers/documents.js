@@ -153,13 +153,12 @@ exports.deleteDocument = async (req, res) => {
 exports.getDocumentsByCategory = async (req, res) => {
     try {
         const { category_id } = req.params;
-
         const documents = await Document.find({ 
                 category_id, 
                 isDeleted: false 
             })
             .populate('category_id', 'name description')
-            .populate('education_level', 'name subjects');
+            .populate('subject', 'name');
 
         res.status(200).json({ success: true, data: documents });
     } catch (error) {
