@@ -36,13 +36,13 @@ class PaymentController {
   // Handle PayPal success callback
   async handlePaypalSuccess(req, res) {
     try {
-      const { paymentId, PayerID } = req.query;
+      const { token, PayerID } = req.query;
       
-      if (!paymentId || !PayerID) {
+      if (!token || !PayerID) {
         return res.status(400).json({ message: 'Missing PayPal payment information' });
       }
       
-      const result = await PaymentService.executePayPalPayment(paymentId, PayerID);
+      const result = await PaymentService.executePayPalPayment(token, PayerID);
       
       // Redirect to client success page with transaction info
       return res.redirect(`${process.env.CLIENT_URL}/payment/success?transactionId=${result.transaction_id}`);
