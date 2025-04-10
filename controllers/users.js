@@ -19,7 +19,7 @@ exports.createAnUser = async function (req, res, next) {
       body.username,
       body.password,
       body.email,
-      body.role
+      body.role = body.role || 'user'
     )
     res.status(200).send({
       success: true,
