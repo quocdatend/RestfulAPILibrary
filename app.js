@@ -35,7 +35,9 @@ app.use('/products', require('./routes/products'));
 app.use('/categories', require('./routes/categories.js'));
 app.use('/documents', require('./routes/documents'));
 app.use('/educations', require('./routes/educations'));
-
+app.get('/auth/resetpassword/:token', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'reset_password.html'));
+});
 app.use(function(req, res, next) {
   next(createError(404));
 });

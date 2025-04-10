@@ -13,6 +13,32 @@
             type="text/javascript"></script>
     </head>
     <body class="bg-gray-100">
+        <nav class="bg-indigo-600 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <a href="/" class="text-2xl font-bold">Document Manager</a>
+                <div class="relative">
+                    <button id="menuButton" class="flex items-center gap-2 hover:text-indigo-200 transition duration-300">
+                        Quản lý
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="dropdownMenu"
+                        class="absolute right-0 mt-2 w-56 bg-white text-black rounded-md shadow-lg z-20 hidden">
+                        <a href="/FONT_END_DOCUMENT/Documents/admin/docAdmin.html"
+                            class="block px-4 py-2 hover:bg-indigo-100">Quản lý Tài liệu</a>
+                        <a href="/FONT_END_DOCUMENT/Documents/admin/education.html"
+                            class="block px-4 py-2 hover:bg-indigo-100">Quản lý Cấp học</a>
+                        <a href="/FONT_END_DOCUMENT/Documents/admin/category.html"
+                            class="block px-4 py-2 hover:bg-indigo-100">Quản lý Danh mục</a>
+                    </div>
+                </div>
+                <button id="logoutBtn"
+                    class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition duration-300 ml-4">Đăng xuất</button>
+            </div>
+        </nav>
         <div class="container mx-auto px-4 py-8">
             <h1 class="text-3xl font-bold text-center mb-8">Document
                 Management</h1>
@@ -23,8 +49,7 @@
                     Document</h2>
                 <form id="documentForm" class="space-y-4">
                     <input type="hidden" id="documentId">
-                    <input type="hidden" id="userId"
-                        value="6614c2fd94513a365cd1e5e3">
+                    <input type="hidden" id="userId" value>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="title"
@@ -233,9 +258,44 @@
                 fileInfo.classList.remove('hidden');
             }
         });
+        let currentUserId = null
+        function getToken() {
+            return localStorage.getItem('token');
+        }
+        async function fetchCurrentUser() {
+            const token = getToken();
+            if (!token) {
+                alert('Please login first');
+                window.location.href = '/login';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                if (data.success && data.data) {
+                    currentUserId = data.data._id;
+                    document.getElementById('userId').value = currentUserId;
+                    return true;
+                }
+                throw new Error(data.message || 'Failed to fetch user');
+            } catch (error) {
+                console.error('Error fetching user:', error);
+                alert('Authentication failed. Please login again.');
+                window.location.href = '/login';
+                return false;
+            }
+        }
+
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', async () => {
+            const authSuccess = await fetchCurrentUser();
+            if (!authSuccess) return;
             await Promise.all([fetchCategories(), fetchEducations()]);
             await fetchDocuments();
             dataLoaded = true;
@@ -460,7 +520,7 @@
                 subject: document.getElementById('subject').value,
                 category_id: document.getElementById('category').value,
                 status: document.getElementById('status').value,
-                user_id: userId,
+                user_id: currentUserId,
                 file_url: document.getElementById('file_url').value,
                 file_size: Number(document.getElementById('file_size').value),
                 file_type: document.getElementById('file_type').value,
@@ -597,7 +657,19 @@
             document.getElementById('file_size').value = '';
             document.getElementById('file_type').value = '';
         }
+        const menuButton = document.getElementById('menuButton');
+    const dropdownMenu = document.getElementById('dropdownMenu');
 
+    menuButton.addEventListener('click', () => {
+        dropdownMenu.classList.toggle('hidden');
+    });
+
+    // Optional: Close dropdown when clicking outside
+    document.addEventListener('click', (event) => {
+        if (!menuButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
+        }
+    });
         function debounce(func, wait) {
             let timeout;
             return function() {
