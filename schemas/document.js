@@ -9,10 +9,10 @@ const documentSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    education_level: {
-        type: String,
-        enum: ['grade2', 'grade3', 'university', 'none'], // Thêm 'none' cho trường hợp không thuộc cấp nào
-        default: 'none' // Mặc định là không thuộc cấp học nào
+    subject: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Subject',
+        required: true
     },
     category_id: {  
         type: mongoose.Types.ObjectId,

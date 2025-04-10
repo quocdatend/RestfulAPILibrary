@@ -13,4 +13,6 @@ router.put('/:id',check_authentication, check_authorization(constants.USER_PERMI
 
 router.delete('/:id', check_authentication, check_authorization(constants.ADMIN_PERMISSION), userControllers.deleteAnUser);
 
+
+
 module.exports = router;
