@@ -9,8 +9,7 @@ router.get('/paypal/cancel', PaymentController.handlePaypalCancel);
 router.post('/paypal/webhook', PaymentController.handlePaypalWebhook);
 
 // Protected routes
-router.use(check_authentication, check_authorization('user'));
-router.post('/create', PaymentController.createPayment);
+router.post('/create',check_authentication, check_authorization('user'), PaymentController.createPayment);
 router.get('/', PaymentController.getAllPayments);
 router.get('/:id', PaymentController.getPaymentById);
 router.get('/user/:userId', PaymentController.getPaymentsByUser);

@@ -4,13 +4,11 @@ const paymentSchema = new mongoose.Schema({
   user_id: {
     type: String,
     required: true,
-    maxlength: 17,
     index: true
   },
   order_id: {
     type: String,
     required: true,
-    maxlength: 6,
     index: true
   },
   transaction_id: {
