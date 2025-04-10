@@ -33,7 +33,6 @@ module.exports = {
             options.password.minLowercase,
             options.password.minNumbers,
             options.password.minSymbols)),
-        body("email").optional().isEmail().withMessage(constants.ERROR_EMAIL),
-        body("avatarURL").optional().isURL().withMessage("link phai la url")
+        body("email").optional().isEmail().withMessage(constants.ERROR_EMAIL)
     ]
 }
