@@ -87,7 +87,7 @@ class PaymentService {
       const payment = await Payment.findOne({ transaction_id: paymentId });
       
       if (!payment) {
-        throw new Error('Payment record not found');
+        throw new Error(paymentId);
       }
       
       payment.payment_status = status;
