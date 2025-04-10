@@ -16,3 +16,35 @@ project-root/
 └── README.md            # Tài liệu project
 
 ```
+# Hướng Dẫn Sử Dụng
+## Cài Đặt
+```
+bash
+npm install
+```
+## Khởi Chạy
+```
+bash
+node bin/www
+```
+## Docs API
+### User
+#### Login
+```
+bash
+curl -X POST \
+http://localhost:3000/api/v1/users/login \
+-H 'Content-Type: application/json' \
+-d '{"username":"abc123", "email": "example@example.com", "password": "password"}'
+```
+#### Signup
+```
+bash
+curl -X POST \
+http://localhost:3000/api/v1/users/signup \
+-H 'Content-Type: application/json' \
+-d '{"email": "example@example.com", "password": "password"}'
+```
+#### Get User
+
+
