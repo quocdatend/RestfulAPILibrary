@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Viewer</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2c3e50;
+      --background-color: #f9f9f9;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+      --border-color: #e0e0e0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      color: var(--secondary-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .back-button i {
+      margin-right: 8px;
+    }
+
+    .back-button:hover {
+      color: var(--primary-color);
+    }
+
+    .document-container {
+      display: grid;
+      grid-template-columns: 1fr 3fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .document-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .document-info {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      height: fit-content;
+    }
+
+    .document-title {
+      font-size: 1.8rem;
+      color: var(--secondary-color);
+      margin-bottom: 15px;
+      word-break: break-word;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+
+    .info-row i {
+      width: 20px;
+      margin-right: 10px;
+      color: var(--primary-color);
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+    }
+
+    .stars {
+      color: #f1c40f;
+      margin-right: 10px;
+    }
+
+    .description {
+      margin: 15px 0;
+      padding: 15px 0;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .download-btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+      margin-top: 15px;
+      transition: background-color 0.3s;
+    }
+
+    .download-btn:hover {
+      background-color: #2980b9;
+    }
+
+    .document-viewer {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .viewer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: var(--secondary-color);
+      color: white;
+    }
+
+    .viewer-controls {
+      display: flex;
+      gap: 15px;
+    }
+
+    .viewer-controls button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 5px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    .viewer-controls button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .iframe-container {
+      flex-grow: 1;
+      background-color: #f0f0f0;
+      position: relative;
+    }
+
+    #document-frame {
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid var(--primary-color);
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .unsupported-format {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .unsupported-format i {
+      font-size: 3rem;
+      color: #e74c3c;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+  <header class="bg-white shadow-md">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="#" class="flex items-center text-blue-600 hover:text-blue-800">
+        <i class="fas fa-book-open text-2xl mr-2"></i>
+        <span class="text-xl font-bold">Thư Viện Tài Liệu</span>
+      </a>
+      <ul class="hidden md:flex space-x-6">
+        <li>
+          <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
+            <i class="fas fa-home mr-2"></i>
+            <span>Trang chủ</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
+            <i class="fas fa-graduation-cap mr-2"></i>
+            <span>Đại học</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
+            <i class="fas fa-school mr-2"></i>
+            <span>Trung học</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
+            <i class="fas fa-history mr-2"></i>
+            <span>Lịch sử tải</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
+            <i class="fas fa-star mr-2"></i>
+            <span>Đánh giá</span>
+          </a>
+        </li>
+      </ul>
+      <div class="flex space-x-3">
+        <button id="login-btn" class="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+          <i class="fas fa-sign-in-alt mr-2"></i>
+          <span>Đăng nhập</span>
+        </button>
+        <button id="register-btn" class="flex items-center px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded hover:bg-blue-50">
+          <i class="fas fa-user-plus mr-2"></i>
+          <span>Đăng ký</span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="container">
+    <header>
+      <a href="javascript:history.back()" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back to documents
+      </a>
+    </header>
+
+    <div class="document-container">
+      <div class="document-info">
+        <h1 id="document-title" class="document-title">Loading...</h1>
+        
+        <div class="info-row rating">
+          <i class="fas fa-star"></i>
+          <div id="document-rating-stars" class="stars"></div>
+          <span id="document-rating">Loading...</span>
+        </div>
+        
+        <div class="info-row">
+          <i class="fas fa-calendar-alt"></i>
+          <span id="document-date">Loading...</span>
+        </div>
+        
+        <div class="info-row">
+          <i class="fas fa-file-alt"></i>
+          <span id="document-pages">Loading...</span>
+        </div>
+        
+        <div class="info-row">
+          <i class="fas fa-download"></i>
+          <span id="document-downloads">Loading...</span>
+        </div>
+        
+        <div id="document-description" class="description">Loading...</div>
+        
+        <a id="document-download-link" href="#" class="download-btn" target="_blank">
+          <i class="fas fa-download"></i> Download Original
+        </a>
+      </div>
+      
+      <div class="document-viewer">
+        <div class="viewer-header">
+          <span id="viewer-filename">Document Viewer</span>
+          <div class="viewer-controls">
+            <button id="zoom-in"><i class="fas fa-search-plus"></i></button>
+            <button id="zoom-out"><i class="fas fa-search-minus"></i></button>
+            <button id="fullscreen"><i class="fas fa-expand"></i></button>
+          </div>
+        </div>
+        <div class="iframe-container">
+          <iframe id="document-frame" src="" frameborder="0"></iframe>
+          <div id="loading-overlay" class="loading-overlay">
+            <div class="spinner"></div>
+            <p>Loading document...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Extract the document ID from the URL query string
+    const urlParams = new URLSearchParams(window.location.search);
+    const documentId = urlParams.get('id');
+
+    // Function to generate star rating HTML
+    function generateStarRating(rating) {
+      const fullStars = Math.floor(rating);
+      const hasHalfStar = rating % 1 >= 0.5;
+      let starsHTML = '';
+      
+      for (let i = 0; i < fullStars; i++) {
+        starsHTML += '<i class="fas fa-star"></i>';
+      }
+      
+      if (hasHalfStar) {
+        starsHTML += '<i class="fas fa-star-half-alt"></i>';
+      }
+      
+      const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+      for (let i = 0; i < emptyStars; i++) {
+        starsHTML += '<i class="far fa-star"></i>';
+      }
+      
+      return starsHTML;
+    }
+
+    // Function to get file extension from URL
+    function getFileExtension(url) {
+      if (!url) return '';
+      return url.split('.').pop().toLowerCase();
+    }
+
+    // Function to determine file type icon
+    function getFileIcon(extension) {
+      switch (extension) {
+        case 'pdf':
+          return 'fa-file-pdf';
+        case 'doc':
+        case 'docx':
+          return 'fa-file-word';
+        case 'ppt':
+        case 'pptx':
+          return 'fa-file-powerpoint';
+        case 'xls':
+        case 'xlsx':
+          return 'fa-file-excel';
+        default:
+          return 'fa-file';
+      }
+    }
+
+    // Function to convert file URL to Google Docs/Office Web Viewer URL if needed
+    function getViewerUrl(fileUrl, fileExtension) {
+      if (!fileUrl) return '';
+      
+      // Check if the file is supported for direct embedding
+      if (fileExtension === 'pdf') {
+        return fileUrl; // PDFs can be embedded directly in modern browsers
+      }
+      
+      // For Office documents, use Google Docs Viewer or Microsoft Office Web Viewer
+      const officeExtensions = ['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'];
+      if (officeExtensions.includes(fileExtension)) {
+        // Using Google Docs Viewer
+        return `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+      }
+      
+      return fileUrl;
+    }
+
+    // Function to display unsupported format message
+    function showUnsupportedFormat(extension) {
+      const iframe = document.getElementById('document-frame');
+      const loadingOverlay = document.getElementById('loading-overlay');
+      
+      // Hide the loading spinner
+      loadingOverlay.style.display = 'none';
+      
+      // Instead of using the iframe, display a message in the container
+      iframe.style.display = 'none';
+      
+      const unsupportedDiv = document.createElement('div');
+      unsupportedDiv.className = 'unsupported-format';
+      unsupportedDiv.innerHTML = `
+        <i class="fas ${getFileIcon(extension)}"></i>
+        <h3>This file format cannot be previewed directly</h3>
+        <p>Please download the file to view its contents</p>
+      `;
+      
+      iframe.parentNode.appendChild(unsupportedDiv);
+    }
+
+    if (documentId) {
+  fetch(`http://localhost:3000/documents/${documentId}`)
+    .then(response => response.json())
+    .then(responseData => {
+      const data = responseData.data;
+      
+      if (data) {
+        // Cloudinary file URL
+        const fileUrl = data.file_url || '';
+        const fileExtension = getFileExtension(fileUrl);
+
+        const documentData = {
+    url: data.file_url || 'Not available',
+    title: data.title || 'Untitled Document',
+    fileSize: data.file_size || 0,
+    fileType: data.file_type || 'Unknown',
+    educationLevel: data.education_level || 'Not specified',
+    categoryId: data.category_id || 'Not assigned',
+    userId: data.user_id || 'Unknown user',
+    downloads: data.download_count || 0,
+    views: data.views || 0,
+    date: data.createdAt ? new Date(data.createdAt).toLocaleDateString() : 'Not available',
+    rating: data.rating_avg || 0,
+    description: data.description || 'No ',
+    tags: data.tags && data.tags.length > 0 ? data.tags : ['None'],
+    status: data.status || 'Unknown'
+};
+console.log('Document Data:', documentData);
+        // Update the DOM
+        document.getElementById('document-title').textContent = documentData.title;
+        document.getElementById('viewer-filename').textContent = documentData.title;
+        document.getElementById('document-rating').textContent = `${documentData.rating} / 5`;
+        document.getElementById('document-rating-stars').innerHTML = generateStarRating(documentData.rating);
+        document.getElementById('document-date').textContent = `Created: ${documentData.date}`;
+        document.getElementById('document-pages').textContent = `Pages: ${documentData.pages}`;
+        document.getElementById('document-downloads').textContent = `Downloads: ${documentData.downloads}`;
+        document.getElementById('document-description').textContent = documentData.description;
+
+        // Set download link to Cloudinary file
+        document.getElementById('document-download-link').href = documentData.url;
+        document.getElementById('document-download-link').title = `Download ${documentData.title}`;
+
+        // Set iframe source to view the Cloudinary PDF
+        const viewerUrl = getViewerUrl(documentData.url, fileExtension);
+        if (viewerUrl) {
+          document.getElementById('document-frame').src = viewerUrl;
+        } else {
+          showUnsupportedFormat(fileExtension);
+        }
+      } else {
+        console.error('No document data found.');
+        document.getElementById('document-title').textContent = 'Document not found';
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching document data:', error);
+      document.getElementById('document-title').textContent = 'Error loading document';
+    })
+    .finally(() => {
+      const iframe = document.getElementById('document-frame');
+      const loadingOverlay = document.getElementById('loading-overlay');
+
+      iframe.onload = function() {
+        loadingOverlay.style.display = 'none';
+      };
+
+      iframe.onerror = function() {
+        loadingOverlay.innerHTML = `
+          <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: #e74c3c; margin-bottom: 10px;"></i>
+          <p>Failed to load document</p>
+        `;
+      };
+    });
+} else {
+  console.error('No document ID found in the URL.');
+  document.getElementById('document-title').textContent = 'No document ID provided';
+}
+
+    // Add functionality to viewer controls
+    document.getElementById('zoom-in').addEventListener('click', function() {
+      const iframe = document.getElementById('document-frame');
+      iframe.style.transform = iframe.style.transform ? 
+        `scale(${parseFloat(iframe.style.transform.replace(/[^\d.-]/g, '')) + 0.1})` : 
+        'scale(1.1)';
+    });
+
+    document.getElementById('zoom-out').addEventListener('click', function() {
+      const iframe = document.getElementById('document-frame');
+      const currentScale = iframe.style.transform ? 
+        parseFloat(iframe.style.transform.replace(/[^\d.-]/g, '')) : 
+        1;
+      iframe.style.transform = `scale(${Math.max(0.5, currentScale - 0.1)})`;
+    });
+
+    document.getElementById('fullscreen').addEventListener('click', function() {
+      const viewer = document.querySelector('.document-viewer');
+      if (viewer.requestFullscreen) {
+        viewer.requestFullscreen();
+      } else if (viewer.webkitRequestFullscreen) { /* Safari */
+        viewer.webkitRequestFullscreen();
+      } else if (viewer.msRequestFullscreen) { /* IE11 */
+        viewer.msRequestFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>

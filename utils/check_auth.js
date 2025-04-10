@@ -1,6 +1,8 @@
 let jwt = require('jsonwebtoken');
 let constants = require('./constants')
 var userControllers = require('../controllers/users')
+
+
 module.exports = {
     check_authentication: async function (req, res, next) {
         let token;
@@ -39,5 +41,24 @@ module.exports = {
                 next(new Error("ban khong co quyen"))
             }
         }
+    },
+    //check Admin
+    checkAdmin: function (req, res, next) {
+        let roleOfUser = req.user.role.name;
+        if (roleOfUser === 'admin') {
+            next();
+        } else {
+            next(new Error("ban khong co quyen"))
+        }
+    },
+    //check User
+    checkUser: function (req, res, next) {
+        let roleOfUser = req.user.role.name;
+        if (roleOfUser === 'user') {
+            next();
+        } else {
+            next(new Error("ban khong co quyen"))
+        }
     }
+
 }
