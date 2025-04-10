@@ -73,9 +73,7 @@ exports.getAllDocuments = async (req, res) => {
 exports.getDocumentById = async (req, res) => {
     try {
         const document = await Document.findById(req.params.id)
-            .populate('subject', 'name')
-            .populate('category_id', 'name')
-            .populate('user_id', 'username');
+        .populate('category_id', 'name description');
 
         if (!document || document.isDeleted) {
             return res.status(404).json({ success: false, message: 'Document not found' });
