@@ -25,7 +25,9 @@ let userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         min: 0
-    }
+    },
+    ResetPasswordToken: String,
+    ResetPasswordTokenExp: Date
 }, {
     timestamps: true
 })

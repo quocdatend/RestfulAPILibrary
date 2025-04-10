@@ -1,542 +1,630 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document Viewer</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-  <style>
-    :root {
-      --primary-color: #3498db;
-      --secondary-color: #2c3e50;
-      --background-color: #f9f9f9;
-      --card-bg: #ffffff;
-      --text-color: #333333;
-      --border-color: #e0e0e0;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--background-color);
-      color: var(--text-color);
-      line-height: 1.6;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 0;
-      border-bottom: 1px solid var(--border-color);
-      margin-bottom: 20px;
-    }
-
-    .back-button {
-      display: inline-flex;
-      align-items: center;
-      color: var(--secondary-color);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s;
-    }
-
-    .back-button i {
-      margin-right: 8px;
-    }
-
-    .back-button:hover {
-      color: var(--primary-color);
-    }
-
-    .document-container {
-      display: grid;
-      grid-template-columns: 1fr 3fr;
-      gap: 20px;
-    }
-
-    @media (max-width: 768px) {
-      .document-container {
-        grid-template-columns: 1fr;
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thư Viện Tài Liệu</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .pdf-thumbnail {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        object-fit: contain;
+        border: 1px solid #e2e8f0;
       }
-    }
-
-    .document-info {
-      background-color: var(--card-bg);
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      height: fit-content;
-    }
-
-    .document-title {
-      font-size: 1.8rem;
-      color: var(--secondary-color);
-      margin-bottom: 15px;
-      word-break: break-word;
-    }
-
-    .info-row {
-      display: flex;
-      align-items: center;
-      margin-bottom: 12px;
-      font-size: 0.95rem;
-    }
-
-    .info-row i {
-      width: 20px;
-      margin-right: 10px;
-      color: var(--primary-color);
-    }
-
-    .rating {
-      display: flex;
-      align-items: center;
-    }
-
-    .stars {
-      color: #f1c40f;
-      margin-right: 10px;
-    }
-
-    .description {
-      margin: 15px 0;
-      padding: 15px 0;
-      border-top: 1px solid var(--border-color);
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .download-btn {
-      display: inline-block;
-      background-color: var(--primary-color);
-      color: white;
-      padding: 10px 15px;
-      border-radius: 5px;
-      text-decoration: none;
-      margin-top: 15px;
-      transition: background-color 0.3s;
-    }
-
-    .download-btn:hover {
-      background-color: #2980b9;
-    }
-
-    .document-viewer {
-      background-color: var(--card-bg);
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      height: 80vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .viewer-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 20px;
-      background-color: var(--secondary-color);
-      color: white;
-    }
-
-    .viewer-controls {
-      display: flex;
-      gap: 15px;
-    }
-
-    .viewer-controls button {
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 5px;
-      border-radius: 4px;
-      transition: background-color 0.3s;
-    }
-
-    .viewer-controls button:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .iframe-container {
-      flex-grow: 1;
-      background-color: #f0f0f0;
-      position: relative;
-    }
-
-    #document-frame {
-      border: none;
-      width: 100%;
-      height: 100%;
-    }
-
-    .loading-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(255, 255, 255, 0.8);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-
-    .spinner {
-      border: 4px solid rgba(0, 0, 0, 0.1);
-      border-radius: 50%;
-      border-top: 4px solid var(--primary-color);
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin-bottom: 15px;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .unsupported-format {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      flex-direction: column;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .unsupported-format i {
-      font-size: 3rem;
-      color: #e74c3c;
-      margin-bottom: 15px;
-    }
-  </style>
-</head>
-<body>
+    </style>
+  </head>
+  <body class="bg-gray-50">
     <!-- Header & Navigation -->
-  <header class="bg-white shadow-md">
-    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-      <a href="#" class="flex items-center text-blue-600 hover:text-blue-800">
-        <i class="fas fa-book-open text-2xl mr-2"></i>
-        <span class="text-xl font-bold">Thư Viện Tài Liệu</span>
-      </a>
-      <ul class="hidden md:flex space-x-6">
-        <li>
-          <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
-            <i class="fas fa-home mr-2"></i>
-            <span>Trang chủ</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
-            <i class="fas fa-graduation-cap mr-2"></i>
-            <span>Đại học</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
-            <i class="fas fa-school mr-2"></i>
-            <span>Trung học</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
-            <i class="fas fa-history mr-2"></i>
-            <span>Lịch sử tải</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
-            <i class="fas fa-star mr-2"></i>
-            <span>Đánh giá</span>
-          </a>
-        </li>
-      </ul>
-      <div class="flex space-x-3">
-        <button id="login-btn" class="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-          <i class="fas fa-sign-in-alt mr-2"></i>
-          <span>Đăng nhập</span>
-        </button>
-        <button id="register-btn" class="flex items-center px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded hover:bg-blue-50">
-          <i class="fas fa-user-plus mr-2"></i>
-          <span>Đăng ký</span>
-        </button>
+    <header class="bg-white shadow-md">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <a href="#" class="flex items-center text-blue-600 hover:text-blue-800">
+          <i class="fas fa-book-open text-2xl mr-2"></i>
+          <span class="text-xl font-bold">Thư Viện Tài Liệu</span>
+        </a>
+        <ul class="hidden md:flex space-x-6">
+          <li>
+            <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
+              <i class="fas fa-home mr-2"></i>
+              <span>Trang chủ</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
+              <i class="fas fa-graduation-cap mr-2"></i>
+              <span>Đại học</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
+              <i class="fas fa-school mr-2"></i>
+              <span>Trung học</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
+              <i class="fas fa-history mr-2"></i>
+              <span>Lịch sử tải</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
+              <i class="fas fa-star mr-2"></i>
+              <span>Đánh giá</span>
+            </a>
+          </li>
+        </ul>
+        <div class="flex space-x-3">
+          <button
+            id="login-btn"
+            class="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            
+          </button>
+          <button
+            id="register-btn"
+            class="flex items-center px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded hover:bg-blue-50"
+          >
+            
+          </button>
+        </div>
       </div>
-    </div>
-  </header>
-  <div class="container">
-    <header>
-      <a href="javascript:history.back()" class="back-button">
-        <i class="fas fa-arrow-left"></i> Back to documents
-      </a>
     </header>
 
-    <div class="document-container">
-      <div class="document-info">
-        <h1 id="document-title" class="document-title">Loading...</h1>
-        
-        <div class="info-row rating">
-          <i class="fas fa-star"></i>
-          <div id="document-rating-stars" class="stars"></div>
-          <span id="document-rating">Loading...</span>
-        </div>
-        
-        <div class="info-row">
-          <i class="fas fa-calendar-alt"></i>
-          <span id="document-date">Loading...</span>
-        </div>
-        
-        <div class="info-row">
-          <i class="fas fa-file-alt"></i>
-          <span id="document-pages">Loading...</span>
-        </div>
-        
-        <div class="info-row">
-          <i class="fas fa-download"></i>
-          <span id="document-downloads">Loading...</span>
-        </div>
-        
-        <div id="document-description" class="description">Loading...</div>
-        
-        <a id="document-download-link" href="#" class="download-btn" target="_blank">
-          <i class="fas fa-download"></i> Download Original
-        </a>
-      </div>
-      
-      <div class="document-viewer">
-        <div class="viewer-header">
-          <span id="viewer-filename">Document Viewer</span>
-          <div class="viewer-controls">
-            <button id="zoom-in"><i class="fas fa-search-plus"></i></button>
-            <button id="zoom-out"><i class="fas fa-search-minus"></i></button>
-            <button id="fullscreen"><i class="fas fa-expand"></i></button>
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+      <!-- Search & Filter -->
+      <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+          <div class="relative flex-grow max-w-2xl">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-search text-gray-400"></i>
+            </div>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Tìm kiếm tài liệu..."
+              class="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+            <select
+              id="education-filter"
+              class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Chọn cấp học</option>
+            </select>
+            <select
+              id="subject-filter"
+              class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+              disabled
+            >
+              <option value="">Chọn môn học</option>
+            </select>
+            <select
+              id="category-filter"
+              class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Tất cả thể loại</option>
+            </select>
+            <select
+              id="sort-filter"
+              class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="newest">Mới nhất</option>
+              <option value="popular">Phổ biến</option>
+              <option value="rating">Đánh giá cao</option>
+            </select>
+            <button
+              id="reset-filters"
+              class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 flex items-center"
+            >
+              <i class="fas fa-redo mr-2"></i> Reset
+            </button>
           </div>
         </div>
-        <div class="iframe-container">
-          <iframe id="document-frame" src="" frameborder="0"></iframe>
-          <div id="loading-overlay" class="loading-overlay">
-            <div class="spinner"></div>
-            <p>Loading document...</p>
+        <div id="search-results-count" class="mt-3 text-sm text-gray-500 hidden">
+          Tìm thấy <span class="font-semibold">0</span> kết quả
+        </div>
+      </div>
+
+      <!-- Documents List from API -->
+      <div id="documents-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <h3 class="text-xl font-bold mb-4">Thư Viện Tài Liệu</h3>
+            <p class="text-gray-300">
+              Nền tảng chia sẻ tài liệu học tập chất lượng cho sinh viên và học sinh.
+            </p>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-4">Liên kết</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-gray-300 hover:text-white">Trang chủ</a></li>
+              <li><a href="#" class="text-gray-300 hover:text-white">Đại học</a></li>
+              <li><a href="#" class="text-gray-300 hover:text-white">Trung học</a></li>
+              <li><a href="#" class="text-gray-300 hover:text-white">Đăng ký</a></li>
+              <li><a href="#" class="text-gray-300 hover:text-white">Đăng nhập</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-4">Hỗ trợ</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-gray-300 hover:text-white">Câu hỏi thường gặp</a></li>
+              <li><a href="#" class="text-gray-300 hover:text-white">Hướng dẫn sử dụng</a></li>
+              <li><a href="#" class="text-gray-300 hover:text-white">Chính sách bảo mật</a></li>
+              <li><a href="#" class="text-gray-300 hover:text-white">Điều khoản dịch vụ</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-4">Liên hệ</h3>
+            <ul class="space-y-2">
+              <li class="flex items-center">
+                <i class="fas fa-envelope mr-2"></i>
+                duydatphung7@gmail.com
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-phone mr-2"></i> 0123456789
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-map-marker-alt mr-2"></i> Thủ Đức, Việt Nam
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+          <p>© 2025 Thư Viện Tài Liệu. Tất cả quyền được bảo lưu.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- PDF Viewer Modal -->
+    <div id="pdf-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-auto relative">
+        <span id="close-modal" class="absolute top-4 right-4 text-2xl cursor-pointer hover:text-gray-600">×</span>
+        <div class="p-6">
+          <h2 id="modal-title" class="text-2xl font-bold mb-4">Xem tài liệu</h2>
+          <div class="w-full h-[70vh] mt-4 overflow-auto">
+            <canvas id="pdf-modal-canvas" class="mx-auto"></canvas>
+          </div>
+          <div class="mt-4 flex flex-col sm:flex-row justify-between items-center">
+            <div class="flex items-center mb-4 sm:mb-0">
+              <button id="prev-page" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Trang trước
+              </button>
+              <span id="page-num" class="mx-4">Trang 1/10</span>
+              <button id="next-page" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 flex items-center">
+                Trang sau <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+            <button id="download-pdf" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center">
+              <i class="fas fa-download mr-2"></i> Tải xuống
+            </button>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    // Extract the document ID from the URL query string
-    const urlParams = new URLSearchParams(window.location.search);
-    const documentId = urlParams.get('id');
 
-    // Function to generate star rating HTML
-    function generateStarRating(rating) {
-      const fullStars = Math.floor(rating);
-      const hasHalfStar = rating % 1 >= 0.5;
-      let starsHTML = '';
-      
-      for (let i = 0; i < fullStars; i++) {
-        starsHTML += '<i class="fas fa-star"></i>';
-      }
-      
-      if (hasHalfStar) {
-        starsHTML += '<i class="fas fa-star-half-alt"></i>';
-      }
-      
-      const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-      for (let i = 0; i < emptyStars; i++) {
-        starsHTML += '<i class="far fa-star"></i>';
-      }
-      
-      return starsHTML;
-    }
 
-    // Function to get file extension from URL
-    function getFileExtension(url) {
-      if (!url) return '';
-      return url.split('.').pop().toLowerCase();
-    }
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script>
+      // Khởi tạo PDF.js
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js";
 
-    // Function to determine file type icon
-    function getFileIcon(extension) {
-      switch (extension) {
-        case 'pdf':
-          return 'fa-file-pdf';
-        case 'doc':
-        case 'docx':
-          return 'fa-file-word';
-        case 'ppt':
-        case 'pptx':
-          return 'fa-file-powerpoint';
-        case 'xls':
-        case 'xlsx':
-          return 'fa-file-excel';
-        default:
-          return 'fa-file';
-      }
-    }
+      // Biến global
+      let allDocuments = [];
+      let allCategories = [];
+      let allEducations = [];
+      let currentPdf = null;
+      let currentPage = 1;
+      let pdfDoc = null;
+      const modalCanvas = document.getElementById("pdf-modal-canvas");
+      const ctx = modalCanvas.getContext("2d");
 
-    // Function to convert file URL to Google Docs/Office Web Viewer URL if needed
-    function getViewerUrl(fileUrl, fileExtension) {
-      if (!fileUrl) return '';
-      
-      // Check if the file is supported for direct embedding
-      if (fileExtension === 'pdf') {
-        return fileUrl; // PDFs can be embedded directly in modern browsers
-      }
-      
-      // For Office documents, use Google Docs Viewer or Microsoft Office Web Viewer
-      const officeExtensions = ['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'];
-      if (officeExtensions.includes(fileExtension)) {
-        // Using Google Docs Viewer
-        return `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=true`;
-      }
-      
-      return fileUrl;
-    }
-
-    // Function to display unsupported format message
-    function showUnsupportedFormat(extension) {
-      const iframe = document.getElementById('document-frame');
-      const loadingOverlay = document.getElementById('loading-overlay');
-      
-      // Hide the loading spinner
-      loadingOverlay.style.display = 'none';
-      
-      // Instead of using the iframe, display a message in the container
-      iframe.style.display = 'none';
-      
-      const unsupportedDiv = document.createElement('div');
-      unsupportedDiv.className = 'unsupported-format';
-      unsupportedDiv.innerHTML = `
-        <i class="fas ${getFileIcon(extension)}"></i>
-        <h3>This file format cannot be previewed directly</h3>
-        <p>Please download the file to view its contents</p>
-      `;
-      
-      iframe.parentNode.appendChild(unsupportedDiv);
-    }
-
-    if (documentId) {
-  fetch(`http://localhost:3000/documents/${documentId}`)
-    .then(response => response.json())
-    .then(responseData => {
-      const data = responseData.data;
-      
-      if (data) {
-        // Cloudinary file URL
-        const fileUrl = data.file_url || '';
-        const fileExtension = getFileExtension(fileUrl);
-
-        const documentData = {
-    url: data.file_url || 'Not available',
-    title: data.title || 'Untitled Document',
-    fileSize: data.file_size || 0,
-    fileType: data.file_type || 'Unknown',
-    educationLevel: data.education_level || 'Not specified',
-    categoryId: data.category_id || 'Not assigned',
-    userId: data.user_id || 'Unknown user',
-    downloads: data.download_count || 0,
-    views: data.views || 0,
-    date: data.createdAt ? new Date(data.createdAt).toLocaleDateString() : 'Not available',
-    rating: data.rating_avg || 0,
-    description: data.description || 'No ',
-    tags: data.tags && data.tags.length > 0 ? data.tags : ['None'],
-    status: data.status || 'Unknown'
-};
-console.log('Document Data:', documentData);
-        // Update the DOM
-        document.getElementById('document-title').textContent = documentData.title;
-        document.getElementById('viewer-filename').textContent = documentData.title;
-        document.getElementById('document-rating').textContent = `${documentData.rating} / 5`;
-        document.getElementById('document-rating-stars').innerHTML = generateStarRating(documentData.rating);
-        document.getElementById('document-date').textContent = `Created: ${documentData.date}`;
-        document.getElementById('document-pages').textContent = `Pages: ${documentData.pages}`;
-        document.getElementById('document-downloads').textContent = `Downloads: ${documentData.downloads}`;
-        document.getElementById('document-description').textContent = documentData.description;
-
-        // Set download link to Cloudinary file
-        document.getElementById('document-download-link').href = documentData.url;
-        document.getElementById('document-download-link').title = `Download ${documentData.title}`;
-
-        // Set iframe source to view the Cloudinary PDF
-        const viewerUrl = getViewerUrl(documentData.url, fileExtension);
-        if (viewerUrl) {
-          document.getElementById('document-frame').src = viewerUrl;
-        } else {
-          showUnsupportedFormat(fileExtension);
+      // Hàm fetch educations từ API
+      async function fetchEducations() {
+        try {
+          const response = await fetch("http://localhost:3000/educations");
+          const data = await response.json();
+          allEducations = data;
+          updateEducationFilter();
+        } catch (error) {
+          console.error("Lỗi khi lấy dữ liệu educations:", error);
         }
-      } else {
-        console.error('No document data found.');
-        document.getElementById('document-title').textContent = 'Document not found';
       }
-    })
-    .catch(error => {
-      console.error('Error fetching document data:', error);
-      document.getElementById('document-title').textContent = 'Error loading document';
-    })
-    .finally(() => {
-      const iframe = document.getElementById('document-frame');
-      const loadingOverlay = document.getElementById('loading-overlay');
 
-      iframe.onload = function() {
-        loadingOverlay.style.display = 'none';
-      };
-
-      iframe.onerror = function() {
-        loadingOverlay.innerHTML = `
-          <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: #e74c3c; margin-bottom: 10px;"></i>
-          <p>Failed to load document</p>
-        `;
-      };
-    });
-} else {
-  console.error('No document ID found in the URL.');
-  document.getElementById('document-title').textContent = 'No document ID provided';
-}
-
-    // Add functionality to viewer controls
-    document.getElementById('zoom-in').addEventListener('click', function() {
-      const iframe = document.getElementById('document-frame');
-      iframe.style.transform = iframe.style.transform ? 
-        `scale(${parseFloat(iframe.style.transform.replace(/[^\d.-]/g, '')) + 0.1})` : 
-        'scale(1.1)';
-    });
-
-    document.getElementById('zoom-out').addEventListener('click', function() {
-      const iframe = document.getElementById('document-frame');
-      const currentScale = iframe.style.transform ? 
-        parseFloat(iframe.style.transform.replace(/[^\d.-]/g, '')) : 
-        1;
-      iframe.style.transform = `scale(${Math.max(0.5, currentScale - 0.1)})`;
-    });
-
-    document.getElementById('fullscreen').addEventListener('click', function() {
-      const viewer = document.querySelector('.document-viewer');
-      if (viewer.requestFullscreen) {
-        viewer.requestFullscreen();
-      } else if (viewer.webkitRequestFullscreen) { /* Safari */
-        viewer.webkitRequestFullscreen();
-      } else if (viewer.msRequestFullscreen) { /* IE11 */
-        viewer.msRequestFullscreen();
+      // Cập nhật education filter
+      function updateEducationFilter() {
+        const educationFilter = document.getElementById("education-filter");
+        while (educationFilter.options.length > 1) {
+          educationFilter.remove(1);
+        }
+        allEducations.forEach(education => {
+          const option = document.createElement("option");
+          option.value = education._id;
+          option.textContent = education.name;
+          educationFilter.appendChild(option);
+        });
       }
-    });
-  </script>
-</body>
+
+      // Cập nhật subject filter dựa trên education đã chọn
+      function updateSubjectFilter(educationId) {
+        const subjectFilter = document.getElementById("subject-filter");
+        while (subjectFilter.options.length > 1) {
+          subjectFilter.remove(1);
+        }
+        subjectFilter.disabled = !educationId;
+
+        if (educationId) {
+          const selectedEducation = allEducations.find(edu => edu._id === educationId);
+          if (selectedEducation && selectedEducation.subjects) {
+            selectedEducation.subjects.forEach(subject => {
+              const option = document.createElement("option");
+              option.value = subject._id;
+              option.textContent = subject.name;
+              subjectFilter.appendChild(option);
+            });
+          }
+        }
+      }
+
+      // Hàm fetch categories (giả lập từ JSON tĩnh)
+      function fetchCategories() {
+        const categoryData = {
+          "success": true,
+          "data": [
+            {
+              "_id": "67ee10544b9a7273b6cc528f",
+              "name": "Electronics",
+              "description": "All kinds of electronic",
+              "isDeleted": false,
+              "createdAt": "2025-04-03T04:36:36.781Z",
+              "updatedAt": "2025-04-05T06:11:35.973Z",
+              "__v": 0
+            },
+            {
+              "_id": "67ee12fa91d2c29e8a334e40",
+              "name": "It",
+              "description": "All kinds of",
+              "isDeleted": false,
+              "createdAt": "2025-04-03T04:47:54.829Z",
+              "updatedAt": "2025-04-05T06:11:44.087Z",
+              "__v": 0
+            },
+            {
+              "_id": "67f08553cd899ed31e7ac546",
+              "name": "IT",
+              "description": "Informarion technology",
+              "isDeleted": false,
+              "createdAt": "2025-04-05T01:20:19.932Z",
+              "updatedAt": "2025-04-05T01:20:19.932Z",
+              "__v": 0
+            }
+          ]
+        };
+        try {
+          if (categoryData.success && Array.isArray(categoryData.data)) {
+            allCategories = categoryData.data;
+            updateCategoryFilter();
+          }
+        } catch (error) {
+          console.error("Lỗi khi lấy dữ liệu categories:", error);
+        }
+      }
+
+      // Cập nhật category filter
+      function updateCategoryFilter() {
+        const categoryFilter = document.getElementById("category-filter");
+        while (categoryFilter.options.length > 1) {
+          categoryFilter.remove(1);
+        }
+        allCategories.forEach(category => {
+          const option = document.createElement("option");
+          option.value = category._id;
+          option.textContent = category.name;
+          categoryFilter.appendChild(option);
+        });
+      }
+
+      // Hàm fetch documents từ API
+      async function fetchDocuments() {
+        try {
+          const response = await fetch("http://localhost:3000/documents");
+          const data = await response.json();
+          if (data.success && data.data.length > 0) {
+            allDocuments = data.data;
+            console.log("Dữ liệu tài liệu:", allDocuments); // Debug dữ liệu tài liệu
+            fetchCategories();
+            fetchEducations();
+            displayDocuments(allDocuments);
+            filterDocuments();
+          } else {
+            document.getElementById("documents-list").innerHTML =
+              '<p class="text-gray-600">Không có tài liệu nào.</p>';
+          }
+        } catch (error) {
+          console.error("Lỗi khi lấy dữ liệu documents:", error);
+          document.getElementById("documents-list").innerHTML =
+            '<p class="text-red-500">Lỗi khi tải dữ liệu. Vui lòng thử lại sau.</p>';
+        }
+      }
+
+      // Hàm hiển thị danh sách tài liệu
+      function displayDocuments(documents) {
+        const container = document.getElementById("documents-list");
+        container.innerHTML = "";
+
+        if (documents.length === 0) {
+          container.innerHTML = '<p class="text-gray-600 col-span-3 text-center">Không tìm thấy tài liệu phù hợp</p>';
+          return;
+        }
+
+        documents.forEach((doc) => {
+          const docElement = document.createElement("div");
+          docElement.className = "bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow";
+
+          docElement.innerHTML = `
+            <div class="p-6">
+              <div class="mb-4 thumbnail-container">
+                <canvas class="hidden"></canvas>
+              </div>
+              <h3 class="text-xl font-bold mb-2 text-gray-800">${doc.title}</h3>
+              <div class="flex flex-wrap items-center text-gray-600 text-sm mb-4">
+                <span class="flex items-center mr-4 mb-2 sm:mb-0">
+                  <i class="fas fa-book mr-1"></i> ${doc.category_id?.name || "Không có danh mục"}
+                </span>
+                <span class="flex items-center mr-4 mb-2 sm:mb-0">
+                  <i class="fas fa-graduation-cap mr-1"></i> ${doc.subject ? doc.subject.name : "Không có môn học"}
+                </span>
+                <span class="flex items-center">
+                  <i class="fas fa-calendar mr-1"></i> ${new Date(doc.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div class="mt-4">
+                <a href="/FONT_END_DOCUMENT/Documents/document.html?id=${doc._id}" 
+                   class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center">
+                  <i class="fas fa-eye mr-2"></i> Xem
+                </a>
+              </div>
+            </div>
+          `;
+
+          container.appendChild(docElement);
+          generateThumbnail(doc.file_url, docElement.querySelector(".thumbnail-container"));
+        });
+      }
+
+      // Hàm tạo thumbnail cho PDF
+      function generateThumbnail(pdfUrl, container) {
+        pdfjsLib
+          .getDocument(pdfUrl)
+          .promise.then((pdf) => {
+            return pdf.getPage(1);
+          })
+          .then((page) => {
+            const scale = 0.5;
+            const viewport = page.getViewport({ scale });
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            return page
+              .render({
+                canvasContext: context,
+                viewport: viewport,
+              })
+              .promise.then(() => {
+                canvas.className = "pdf-thumbnail";
+                container.innerHTML = "";
+                container.appendChild(canvas);
+              });
+          })
+          .catch((error) => {
+            console.error("Lỗi khi tạo thumbnail:", error);
+            container.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg" alt="PDF Logo" class="pdf-thumbnail">`;
+          });
+      }
+
+      // Hàm filter documents
+      function filterDocuments() {
+        const searchTerm = document.getElementById("search-input").value.toLowerCase();
+        const categoryFilter = document.getElementById("category-filter").value;
+        const educationFilter = document.getElementById("education-filter").value;
+        const subjectFilter = document.getElementById("subject-filter").value;
+        const sortFilter = document.getElementById("sort-filter").value;
+
+        console.log("Bộ lọc:", { searchTerm, categoryFilter, educationFilter, subjectFilter, sortFilter });
+
+        let filtered = allDocuments.filter((doc) => {
+          // Filter theo search term
+          const matchesSearch =
+            doc.title.toLowerCase().includes(searchTerm) ||
+            (doc.description && doc.description.toLowerCase().includes(searchTerm));
+
+          // Filter theo category
+          const matchesCategory =
+            !categoryFilter || (doc.category_id && doc.category_id._id === categoryFilter);
+
+          // Filter theo education (cấp học)
+          let matchesEducation = true;
+          if (educationFilter) {
+            // Tìm môn học của tài liệu trong danh sách educations
+            const subjectId = doc.subject ? doc.subject._id : null;
+            if (subjectId) {
+              const education = allEducations.find(edu =>
+                edu.subjects.some(sub => sub._id === subjectId && sub.educationLevel === educationFilter)
+              );
+              matchesEducation = !!education;
+            } else {
+              matchesEducation = false; // Không có subject thì không khớp education
+            }
+          }
+
+          // Filter theo subject (môn học)
+          const matchesSubject =
+            !subjectFilter || (doc.subject && doc.subject._id === subjectFilter);
+
+          return matchesSearch && matchesCategory && matchesEducation && matchesSubject;
+        });
+
+        console.log("Kết quả lọc:", filtered);
+
+        // Sắp xếp kết quả
+        switch (sortFilter) {
+          case "newest":
+            filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            break;
+          case "popular":
+            filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
+            break;
+          case "rating":
+            filtered.sort((a, b) => (b.rating_avg || 0) - (a.rating_avg || 0));
+            break;
+        }
+
+        displayDocuments(filtered);
+
+        // Hiển thị số lượng kết quả
+        const resultsCount = document.getElementById("search-results-count");
+        resultsCount.classList.remove("hidden");
+        resultsCount.innerHTML = `Tìm thấy <span class="font-semibold">${filtered.length}</span> kết quả`;
+      }
+
+      // Hàm debounce
+      function debounce(func, timeout = 500) {
+        let timer;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            func.apply(this, args);
+          }, timeout);
+        };
+      }
+
+      // Hàm hiển thị PDF trong modal
+      function renderPDFModal(pdfUrl, title) {
+        const modal = document.getElementById("pdf-modal");
+        document.getElementById("modal-title").textContent = title;
+
+        pdfjsLib
+          .getDocument(pdfUrl)
+          .promise.then((pdf) => {
+            pdfDoc = pdf;
+            currentPage = 1;
+            currentPdf = pdfUrl;
+            renderPage(currentPage);
+
+            document.getElementById("page-num").textContent = `Trang ${currentPage}/${pdfDoc.numPages}`;
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+          })
+          .catch((error) => {
+            console.error("Lỗi khi tải PDF:", error);
+            alert("Không thể tải tài liệu. Vui lòng thử lại sau.");
+          });
+      }
+
+      // Hàm hiển thị trang cụ thể
+      function renderPage(pageNum) {
+        pdfDoc.getPage(pageNum).then((page) => {
+          const viewport = page.getViewport({ scale: 1.5 });
+          const container = document.querySelector("#pdf-modal > div > div > div");
+          const containerWidth = container.clientWidth - 48;
+          const scale = containerWidth / viewport.width;
+          const scaledViewport = page.getViewport({ scale });
+
+          modalCanvas.height = scaledViewport.height;
+          modalCanvas.width = scaledViewport.width;
+
+          const renderContext = {
+            canvasContext: ctx,
+            viewport: scaledViewport,
+          };
+          page.render(renderContext);
+        });
+      }
+
+      // Event listeners
+      document.getElementById("prev-page").addEventListener("click", function() {
+        if (currentPage > 1) {
+          currentPage--;
+          renderPage(currentPage);
+          document.getElementById("page-num").textContent = `Trang ${currentPage}/${pdfDoc.numPages}`;
+        }
+      });
+
+      document.getElementById("next-page").addEventListener("click", function() {
+        if (currentPage < pdfDoc.numPages) {
+          currentPage++;
+          renderPage(currentPage);
+          document.getElementById("page-num").textContent = `Trang ${currentPage}/${pdfDoc.numPages}`;
+        }
+      });
+
+      document.getElementById("download-pdf").addEventListener("click", function() {
+        if (currentPdf) {
+          const link = document.createElement("a");
+          link.href = currentPdf;
+          link.download = currentPdf.split("/").pop();
+          link.click();
+        }
+      });
+
+      document.querySelectorAll(".close-modal, #close-modal").forEach((btn) => {
+        btn.addEventListener("click", function() {
+          document.querySelectorAll('[id$="-modal"]').forEach((modal) => {
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+          });
+        });
+      });
+
+      window.addEventListener("click", function(event) {
+        if (
+          event.target.id === "pdf-modal" ||
+          event.target.id === "login-modal" ||
+          event.target.id === "register-modal"
+        ) {
+          event.target.classList.add("hidden");
+          event.target.classList.remove("flex");
+        }
+      });
+
+      document.getElementById("search-input").addEventListener("input", debounce(filterDocuments));
+      document.getElementById("category-filter").addEventListener("change", filterDocuments);
+      document.getElementById("sort-filter").addEventListener("change", filterDocuments);
+      document.getElementById("education-filter").addEventListener("change", function() {
+        const educationId = this.value;
+        updateSubjectFilter(educationId);
+        filterDocuments();
+      });
+      document.getElementById("subject-filter").addEventListener("change", filterDocuments);
+
+      document.getElementById("reset-filters").addEventListener("click", function() {
+        document.getElementById("search-input").value = "";
+        document.getElementById("category-filter").value = "";
+        document.getElementById("education-filter").value = "";
+        document.getElementById("subject-filter").value = "";
+        document.getElementById("subject-filter").disabled = true;
+        document.getElementById("sort-filter").value = "newest";
+        filterDocuments();
+      });
+
+      // Tải dữ liệu khi trang tải xong
+      window.addEventListener("DOMContentLoaded", fetchDocuments);
+    </script>
+  </body>
 </html>

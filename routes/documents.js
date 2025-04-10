@@ -2,21 +2,20 @@ const express = require('express');
 const router = express.Router();
 const documentController = require('../controllers/documents');
 
-// 🟢 Tạo mới tài liệu
 router.post('/', documentController.createDocument);
 
-// 🟢 Lấy danh sách tất cả tài liệu (chưa bị xóa)
+// Get all documents
 router.get('/', documentController.getAllDocuments);
 
-// 🟢 Lấy tài liệu theo ID
+// Get a document by ID
 router.get('/:id', documentController.getDocumentById);
 
-// 🟢 Cập nhật tài liệu
+// Update a document by ID
 router.put('/:id', documentController.updateDocument);
 
-// 🟢 Xóa tài liệu (soft delete)
+// Soft delete a document by ID
 router.delete('/:id', documentController.deleteDocument);
 
-router.get('/documents/category/:category_id', documentController.getDocumentsByCategory);
+router.get('/category/:category_id', documentController.getDocumentsByCategory);
 
 module.exports = router;

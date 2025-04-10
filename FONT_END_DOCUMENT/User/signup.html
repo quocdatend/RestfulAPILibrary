@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library - Sign Up</title>
+    <style>
+      body {
+        background-color: #f4f1ea;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 40px 30px;
+        width: 300px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h2 {
+        color: #6c584c;
+        margin-bottom: 20px;
+      }
+
+      input {
+        width: 100%;
+        padding: 8px;
+        margin: 10px 0;
+        border: none;
+        border-bottom: 1px solid #6c584c;
+        background: transparent;
+      }
+
+      .btn {
+        margin-top: 15px;
+        background-color: #6c584c;
+        color: #ffffff;
+        padding: 10px;
+        border: none;
+        width: 100%;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .toggle-link {
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      .toggle-link a {
+        color: #6c584c;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        border-radius: 8px;
+        font-weight: bold;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+
+      .toast.hidden {
+        opacity: 0;
+        transform: translateX(100%);
+        pointer-events: none;
+      }
+
+      .toast.success {
+        background-color: #d4edda;
+        color: #155724;
+        border-left: 6px solid #28a745;
+      }
+
+      .toast.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-left: 6px solid #dc3545;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>SignUp Now</h2>
+      <input type="text" id="username" placeholder="Username" />
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button class="btn" onclick="handleSignup()">Sign Up</button>
+      <div class="toggle-link">
+        Already have an account? <a href="login.html">Login</a>
+      </div>
+    </div>
+    <div id="toast" class="toast hidden">Login successful!</div>
+    <script>
+      async function handleSignup() {
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        if (!username || !email || !password) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        try {
+          const res = await fetch("http://localhost:3000/auth/signup", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, email, password }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            showToast("success", "Signup successful!");
+            window.location.href = "login.html";
+          } else {
+            showToast("error", data.message || "Unknown error");
+          }
+        } catch (err) {
+          console.error("Error:", err);
+          showToast("error", "Failed to connect to the server.");
+        }
+      }
+      function showToast(type, message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+
+        toast.className = "toast"; // reset class
+        toast.classList.add(type); // type = success | error
+        toast.classList.remove("hidden");
+
+        setTimeout(() => {
+          toast.classList.add("hidden");
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>

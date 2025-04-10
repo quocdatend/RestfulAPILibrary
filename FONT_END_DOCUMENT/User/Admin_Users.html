@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - User List</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f1ea;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #6c584c;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e6dcd1;
+      color: #6c584c;
+    }
+
+    tr:hover {
+      background-color: #f9f5f0;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Admin - All Users</h1>
+    <div id="error" class="error"></div>
+    <table id="userTable">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows inserted here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    async function loadUsers() {
+      const token = localStorage.getItem('token');
+      const errorDiv = document.getElementById('error');
+
+      if (!token) {
+        errorDiv.textContent = 'Access denied. No token found.';
+        return;
+      }
+
+      try {
+        const res = await fetch('http://localhost:3000/users', {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Bearer ' + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Zjc3NGM0ZjJkODBlZGMwMWE5YWI5NyIsImV4cGlyZUluIjoxNzQ0Mjk3NjQ2MzUyLCJpYXQiOjE3NDQyOTQwNDZ9.0h3xE2LbBXqzQOVj6urUvmplEVs0Q2sghFOMPt4MpR4"
+          }
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          errorDiv.textContent = data.message || 'Unauthorized or server error.';
+          return;
+        }
+
+        const users = await res.json();
+        const tbody = document.querySelector('#userTable tbody');
+
+        users.data.forEach((user, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${user.username}</td>
+            <td>${user.email}</td>
+            <td>${new Date(user.created_at || user.createdAt).toLocaleString()}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error(err);
+        errorDiv.textContent = 'Failed to load users.';
+      }
+    }
+
+    window.onload = loadUsers;
+  </script>
+</body>
+</html>

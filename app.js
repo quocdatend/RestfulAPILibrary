@@ -22,16 +22,28 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser('NNPTUD'));
+app.use(cookieParser('LIBRARY'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/admins', require('./routes/admins'));
+app.use('/payments', require('./routes/payments'));
 app.use('/roles', require('./routes/roles'));
 app.use('/auth', require('./routes/auth'));
 app.use('/products', require('./routes/products'));
 app.use('/categories', require('./routes/categories.js'));
 app.use('/documents', require('./routes/documents'));
+app.use('/educations', require('./routes/educations'));
+app.get('/auth/resetpassword/:token', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'reset_password.html'));
+});
+app.get('/payments/payment/success', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'payment_success.html'));
+});
+app.get('/payments/payment/cancel', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'payment_cancel.html'));
+});
 app.use(function(req, res, next) {
   next(createError(404));
 });
