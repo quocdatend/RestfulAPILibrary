@@ -240,7 +240,7 @@
       const urlParams = new URLSearchParams(window.location.search);
       const documentId = urlParams.get("documentId") || "123";
       console.log("Document ID:", documentId);
-      const userId = "user123";
+      let userId = "user123";
 
       const token = localStorage.getItem("token");
 

@@ -20,7 +20,7 @@
   </div>
 
   <script>
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZjgwMGRkMDRlMTM2NzIyMmY4OWI0OSIsImV4cGlyZUluIjoxNzQ0MzQyNzA3MTk3LCJpYXQiOjE3NDQzMzkxMDd9.qc9iiVmTUvS2n616E6WEZdDmUz6aKXbcBkhswSSqqog";//localStorage.getItem("token");
+    const token = localStorage.getItem("token");//localStorage.getItem("token");
     const documentList = document.getElementById("document-list");
 
     const renderStars = (rating) => {
@@ -66,7 +66,7 @@
           container.innerHTML = '<p class="text-gray-500">Chưa có đánh giá nào cho tài liệu này.</p>';
           return;
         }
-
+        console.log(ratings);
         let ratingsHTML = ratings.map(rating => `
           <div class="p-4 border border-gray-200 rounded-lg bg-gray-50 mb-2">
             <div class="mb-2">${renderStars(rating.rating)}</div>

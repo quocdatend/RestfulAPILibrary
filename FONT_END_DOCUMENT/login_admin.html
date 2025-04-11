@@ -109,15 +109,15 @@
     <div id="toast" class="toast hidden">Login successful!</div>
     <script>
       async function handleLogin() {
-        const username = document.getElementById("username").value.trim();
+        const name = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value.trim();
 
-        if (!username || !password) {
+        if (!name || !password) {
           showToast("error", "Please fill in all fields.");
           return;
         }
         try {
-          const res = await fetch("http://localhost:3000/admin/login", {
+          const res = await fetch("http://localhost:3000/admins/login", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -131,7 +131,7 @@
               localStorage.setItem("token", data.data);
             }
             showToast("success", "Login successful!");
-            window.location.href = '';
+            window.location.href = 'http://127.0.0.1:5501/FONT_END_DOCUMENT/Rates/adminratings.html';
           } else {
             showToast("error", data.message || "Login failed");
           }
