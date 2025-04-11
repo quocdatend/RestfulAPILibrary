@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+let mongoose = require("mongoose");
 
-const ratingSchema = new mongoose.Schema(
+let ratingSchema = new mongoose.Schema(
   {
     userId: { type: String, required: true },
     documentId: { type: String, required: true },
@@ -10,4 +10,4 @@ const ratingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = ratingSchema;
+module.exports = mongoose.model('rating', ratingSchema);

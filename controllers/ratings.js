@@ -1,7 +1,4 @@
-const mongoose = require('mongoose');
-const ratingSchema = require('../schemas/ratings');
-
-const Rating = mongoose.model('Rating', ratingSchema);
+const Rating = require('../schemas/ratings');
 
 // Thêm đánh giá mới
 exports.addRating = async (req, res) => {
