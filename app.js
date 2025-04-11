@@ -29,6 +29,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/admins', require('./routes/admins'));
 app.use('/payments', require('./routes/payments'));
+app.use('/ratings', require('./routes/ratings'));
 app.use('/roles', require('./routes/roles'));
 app.use('/auth', require('./routes/auth'));
 app.use('/products', require('./routes/products'));
