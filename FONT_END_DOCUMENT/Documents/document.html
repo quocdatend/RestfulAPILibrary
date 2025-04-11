@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document Viewer</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
   <style>
     :root {
       --primary-color: #3498db;
@@ -15,12 +15,6 @@
       --text-color: #333333;
       --border-color: #e0e0e0;
     }
-
-
-
-
-
-
     
     * {
       margin: 0;
@@ -137,6 +131,28 @@
 
     .download-btn:hover {
       background-color: #2980b9;
+    }
+
+    .comment-btn {
+      display: inline-block;
+      background-color: #27ae60;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+      margin-top: 15px;
+      margin-left: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .comment-btn:hover {
+      background-color: #219653;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .document-viewer {
@@ -321,9 +337,16 @@
         
         <div id="document-description" class="description">Loading...</div>
         
-        <a id="document-download-link" href="#" class="download-btn" target="_blank">
-          <i class="fas fa-download"></i> Download Original
-        </a>
+        <div class="action-buttons">
+          <a id="document-download-link" href="#" class="download-btn" target="_blank">
+            <i class="fas fa-download"></i> Download Original
+          </a>
+          
+          <a id="document-comment-link" href="#" class="comment-btn" target="_blank">
+            <i class="fas fa-comment"></i> Rate & Comment
+          </a>
+        </div>
+        
       </div>
       
       <div class="document-viewer">
@@ -440,82 +463,88 @@
     }
 
     if (documentId) {
-  fetch(`http://localhost:3000/documents/${documentId}`)
-    .then(response => response.json())
-    .then(responseData => {
-      const data = responseData.data;
+      // Set up the comment link with the document ID
+      const commentLink = document.getElementById('document-comment-link');
+      commentLink.href = `http://localhost:3000/ratings?documentId=${documentId}`;
       
-      if (data) {
-        // Cloudinary file URL
-        const fileUrl = data.file_url || '';
-        const fileExtension = getFileExtension(fileUrl);
+      fetch(`http://localhost:3000/documents/${documentId}`)
+        .then(response => response.json())
+        .then(responseData => {
+          const data = responseData.data;
+          
+          if (data) {
+            // Cloudinary file URL
+            const fileUrl = data.file_url || '';
+            const fileExtension = getFileExtension(fileUrl);
 
-        const documentData = {
-    url: data.file_url || 'Not available',
-    title: data.title || 'Untitled Document',
-    fileSize: data.file_size || 0,
-    fileType: data.file_type || 'Unknown',
-    educationLevel: data.education_level || 'Not specified',
-    categoryId: data.category_id || 'Not assigned',
-    userId: data.user_id || 'Unknown user',
-    downloads: data.download_count || 0,
-    views: data.views || 0,
-    date: data.createdAt ? new Date(data.createdAt).toLocaleDateString() : 'Not available',
-    rating: data.rating_avg || 0,
-    description: data.description || 'No ',
-    tags: data.tags && data.tags.length > 0 ? data.tags : ['None'],
-    status: data.status || 'Unknown'
-};
-console.log('Document Data:', documentData);
-        // Update the DOM
-        document.getElementById('document-title').textContent = documentData.title;
-        document.getElementById('viewer-filename').textContent = documentData.title;
-        document.getElementById('document-rating').textContent = `${documentData.rating} / 5`;
-        document.getElementById('document-rating-stars').innerHTML = generateStarRating(documentData.rating);
-        document.getElementById('document-date').textContent = `Created: ${documentData.date}`;
-        document.getElementById('document-pages').textContent = `Pages: ${documentData.pages}`;
-        document.getElementById('document-downloads').textContent = `Downloads: ${documentData.downloads}`;
-        document.getElementById('document-description').textContent = documentData.description;
+            const documentData = {
+              url: data.file_url || 'Not available',
+              title: data.title || 'Untitled Document',
+              fileSize: data.file_size || 0,
+              fileType: data.file_type || 'Unknown',
+              educationLevel: data.education_level || 'Not specified',
+              categoryId: data.category_id || 'Not assigned',
+              userId: data.user_id || 'Unknown user',
+              downloads: data.download_count || 0,
+              views: data.views || 0,
+              date: data.createdAt ? new Date(data.createdAt).toLocaleDateString() : 'Not available',
+              rating: data.rating_avg || 0,
+              description: data.description || 'No description available',
+              tags: data.tags && data.tags.length > 0 ? data.tags : ['None'],
+              status: data.status || 'Unknown',
+              pages: data.pages || 'Unknown'
+            };
+            console.log('Document Data:', documentData);
+            
+            // Update the DOM
+            document.getElementById('document-title').textContent = documentData.title;
+            document.getElementById('viewer-filename').textContent = documentData.title;
+            document.getElementById('document-rating').textContent = `${documentData.rating} / 5`;
+            document.getElementById('document-rating-stars').innerHTML = generateStarRating(documentData.rating);
+            document.getElementById('document-date').textContent = `Created: ${documentData.date}`;
+            document.getElementById('document-pages').textContent = `Pages: ${documentData.pages}`;
+            document.getElementById('document-downloads').textContent = `Downloads: ${documentData.downloads}`;
+            document.getElementById('document-description').textContent = documentData.description;
 
-        // Set download link to Cloudinary file
-        document.getElementById('document-download-link').href = documentData.url;
-        document.getElementById('document-download-link').title = `Download ${documentData.title}`;
+            // Set download link to Cloudinary file
+            document.getElementById('document-download-link').href = documentData.url;
+            document.getElementById('document-download-link').title = `Download ${documentData.title}`;
 
-        // Set iframe source to view the Cloudinary PDF
-        const viewerUrl = getViewerUrl(documentData.url, fileExtension);
-        if (viewerUrl) {
-          document.getElementById('document-frame').src = viewerUrl;
-        } else {
-          showUnsupportedFormat(fileExtension);
-        }
-      } else {
-        console.error('No document data found.');
-        document.getElementById('document-title').textContent = 'Document not found';
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching document data:', error);
-      document.getElementById('document-title').textContent = 'Error loading document';
-    })
-    .finally(() => {
-      const iframe = document.getElementById('document-frame');
-      const loadingOverlay = document.getElementById('loading-overlay');
+            // Set iframe source to view the Cloudinary PDF
+            const viewerUrl = getViewerUrl(documentData.url, fileExtension);
+            if (viewerUrl) {
+              document.getElementById('document-frame').src = viewerUrl;
+            } else {
+              showUnsupportedFormat(fileExtension);
+            }
+          } else {
+            console.error('No document data found.');
+            document.getElementById('document-title').textContent = 'Document not found';
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching document data:', error);
+          document.getElementById('document-title').textContent = 'Error loading document';
+        })
+        .finally(() => {
+          const iframe = document.getElementById('document-frame');
+          const loadingOverlay = document.getElementById('loading-overlay');
 
-      iframe.onload = function() {
-        loadingOverlay.style.display = 'none';
-      };
+          iframe.onload = function() {
+            loadingOverlay.style.display = 'none';
+          };
 
-      iframe.onerror = function() {
-        loadingOverlay.innerHTML = `
-          <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: #e74c3c; margin-bottom: 10px;"></i>
-          <p>Failed to load document</p>
-        `;
-      };
-    });
-} else {
-  console.error('No document ID found in the URL.');
-  document.getElementById('document-title').textContent = 'No document ID provided';
-}
+          iframe.onerror = function() {
+            loadingOverlay.innerHTML = `
+              <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: #e74c3c; margin-bottom: 10px;"></i>
+              <p>Failed to load document</p>
+            `;
+          };
+        });
+    } else {
+      console.error('No document ID found in the URL.');
+      document.getElementById('document-title').textContent = 'No document ID provided';
+    }
 
     // Add functionality to viewer controls
     document.getElementById('zoom-in').addEventListener('click', function() {
