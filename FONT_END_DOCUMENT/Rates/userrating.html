@@ -1,361 +1,408 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đánh giá tài liệu</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            padding: 20px;
-        }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f2f5;
+        padding: 20px;
+      }
 
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .document-info {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .document-info h1 {
+        font-size: 28px;
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      .document-info p {
+        font-size: 16px;
+        color: #666;
+      }
+
+      .ratings-summary {
+        text-align: center;
+        margin-bottom: 30px;
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+      }
+
+      .ratings-summary h2 {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      .ratings-list {
+        margin-bottom: 30px;
+      }
+
+      .ratings-list h2 {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .rating-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .rating-item:last-child {
+        border-bottom: none;
+      }
+
+      .rating-item .user-avatar {
+        width: 40px;
+        height: 40px;
+        background: #007bff;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        margin-right: 15px;
+      }
+
+      .rating-item .rating-content {
+        flex: 1;
+      }
+
+      .rating-item .rating-content .user-name {
+        font-weight: bold;
+        color: #333;
+      }
+
+      .rating-item .rating-content .stars {
+        color: #f1c40f;
+        margin: 5px 0;
+      }
+
+      .rating-item .rating-content p {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .rating-form {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+      }
+
+      .rating-form h2 {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .rating-form .form-group {
+        margin-bottom: 15px;
+      }
+
+      .rating-form label {
+        display: block;
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .rating-form select,
+      .rating-form textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        resize: none;
+      }
+
+      .rating-form button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s;
+      }
+
+      .rating-form button:hover {
+        background: #0056b3;
+      }
+
+      .error-message {
+        color: #dc3545;
+        font-size: 14px;
+        margin-top: 5px;
+        display: none;
+      }
+
+      @media (max-width: 600px) {
         .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .document-info {
-            text-align: center;
-            margin-bottom: 30px;
+          padding: 15px;
         }
 
         .document-info h1 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .document-info p {
-            font-size: 16px;
-            color: #666;
-        }
-
-        .ratings-summary {
-            text-align: center;
-            margin-bottom: 30px;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-        }
-
-        .ratings-summary h2 {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .ratings-list {
-            margin-bottom: 30px;
-        }
-
-        .ratings-list h2 {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 15px;
+          font-size: 24px;
         }
 
         .rating-item {
-            display: flex;
-            align-items: flex-start;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .rating-item:last-child {
-            border-bottom: none;
+          flex-direction: column;
+          align-items: flex-start;
         }
 
         .rating-item .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: #007bff;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            margin-right: 15px;
+          margin-bottom: 10px;
         }
-
-        .rating-item .rating-content {
-            flex: 1;
-        }
-
-        .rating-item .rating-content .user-name {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .rating-item .rating-content .stars {
-            color: #f1c40f;
-            margin: 5px 0;
-        }
-
-        .rating-item .rating-content p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .rating-form {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .rating-form h2 {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .rating-form .form-group {
-            margin-bottom: 15px;
-        }
-
-        .rating-form label {
-            display: block;
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .rating-form select, .rating-form textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            resize: none;
-        }
-
-        .rating-form button {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s;
-        }
-
-        .rating-form button:hover {
-            background: #0056b3;
-        }
-
-        .error-message {
-            color: #dc3545;
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 15px;
-            }
-
-            .document-info h1 {
-                font-size: 24px;
-            }
-
-            .rating-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .rating-item .user-avatar {
-                margin-bottom: 10px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <!-- Thông tin tài liệu -->
-        <div class="document-info">
-            <h1 id="document-title">Tên tài liệu</h1>
-            <p id="document-description">Mô tả tài liệu sẽ được hiển thị ở đây.</p>
-        </div>
+      <div class="document-info">
+        <h1 id="document-title">Tên tài liệu</h1>
+        <p id="document-description">Mô tả tài liệu sẽ được hiển thị ở đây.</p>
+      </div>
 
-        <!-- Tổng số lượng đánh giá -->
-        <div class="ratings-summary">
-            <h2>Tổng số đánh giá</h2>
-            <p id="total-ratings">Chưa có đánh giá</p>
-        </div>
+      <div class="ratings-summary">
+        <h2>Tổng số đánh giá</h2>
+        <p id="total-ratings">Chưa có đánh giá</p>
+      </div>
 
-        <!-- Danh sách đánh giá -->
-        <div class="ratings-list">
-            <h2>Đánh giá từ người dùng</h2>
-            <div id="ratings-container">
-                <!-- Các đánh giá sẽ được thêm động bằng JavaScript -->
-            </div>
-        </div>
+      <div class="ratings-list">
+        <h2>Đánh giá từ người dùng</h2>
+        <div id="ratings-container"></div>
+      </div>
 
-        <!-- Form gửi đánh giá -->
-        <div class="rating-form">
-            <h2>Gửi đánh giá của bạn</h2>
-            <div class="form-group">
-                <label for="rating-score">Điểm số:</label>
-                <select id="rating-score" required>
-                    <option value="">Chọn điểm số</option>
-                    <option value="1">1 - Rất tệ</option>
-                    <option value="2">2 - Tệ</option>
-                    <option value="3">3 - Trung bình</option>
-                    <option value="4">4 - Tốt</option>
-                    <option value="5">5 - Rất tốt</option>
-                </select>
-                <div id="score-error" class="error-message">Vui lòng chọn điểm số!</div>
-            </div>
-            <div class="form-group">
-                <label for="rating-comment">Bình luận:</label>
-                <textarea id="rating-comment" rows="4" placeholder="Viết bình luận của bạn..." required></textarea>
-                <div id="comment-error" class="error-message">Vui lòng nhập bình luận!</div>
-            </div>
-            <button onclick="submitRating()">Gửi đánh giá</button>
+      <div class="rating-form">
+        <h2>Gửi đánh giá của bạn</h2>
+        <div class="form-group">
+          <label for="rating-score">Điểm số:</label>
+          <select id="rating-score" required>
+            <option value="">Chọn điểm số</option>
+            <option value="1">1 - Rất tệ</option>
+            <option value="2">2 - Tệ</option>
+            <option value="3">3 - Trung bình</option>
+            <option value="4">4 - Tốt</option>
+            <option value="5">5 - Rất tốt</option>
+          </select>
+          <div id="score-error" class="error-message">
+            Vui lòng chọn điểm số!
+          </div>
         </div>
+        <div class="form-group">
+          <label for="rating-comment">Bình luận:</label>
+          <textarea
+            id="rating-comment"
+            rows="4"
+            placeholder="Viết bình luận của bạn..."
+            required
+          ></textarea>
+          <div id="comment-error" class="error-message">
+            Vui lòng nhập bình luận!
+          </div>
+        </div>
+        <button onclick="submitRating()">Gửi đánh giá</button>
+      </div>
     </div>
-
+    <div style="margin-bottom: 20px">
+      <a
+        href="http://localhost:5501/FONT_END_DOCUMENT/Documents/documents.html"
+        style="text-decoration: none; color: #007bff; font-weight: bold"
+      >
+        <i class="fas fa-arrow-left"></i> Quay lại danh sách tài liệu
+      </a>
+    </div>
     <script>
-        // Lấy documentId từ URL (ví dụ: userrating.html?documentId=123)
-        const urlParams = new URLSearchParams(window.location.search);
-        const documentId = urlParams.get("documentId") || "123"; // Mặc định là "123" nếu không có
-        console.log('Document ID:', documentId); // Thêm log để kiểm tra documentId
+      const urlParams = new URLSearchParams(window.location.search);
+      const documentId = urlParams.get("documentId") || "123";
+      console.log("Document ID:", documentId);
 
-        // Giả lập userId (thay bằng thông tin người dùng thực tế từ session hoặc token)
-        const userId = "user123"; // Thay bằng userId thực tế
-        console.log('User ID:', userId); // Thêm log để kiểm tra userId
+      const userId = "user123";
 
-        // Hàm hiển thị số sao
-        function displayStars(rating) {
-            let stars = '';
-            for (let i = 1; i <= 5; i++) {
-                if (i <= rating) {
-                    stars += '<i class="fas fa-star"></i>';
-                } else {
-                    stars += '<i class="far fa-star"></i>';
-                }
-            }
-            return stars;
+      const token = localStorage.getItem("token");
+
+      fetch("http://localhost:3000/auth/me", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Lỗi khi gọi API");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          userId = data.data._id;
+        })
+        .catch((error) => {
+          console.error("Lỗi:", error);
+        });
+
+      function displayStars(rating) {
+        let stars = "";
+        for (let i = 1; i <= 5; i++) {
+          if (i <= rating) {
+            stars += '<i class="fas fa-star"></i>';
+          } else {
+            stars += '<i class="far fa-star"></i>';
+          }
         }
+        return stars;
+      }
 
-        // Hàm lấy thông tin tài liệu và đánh giá từ backend
-        async function fetchDocumentAndRatings() {
-            try {
-                // Lấy thông tin tài liệu (giả lập, bạn có thể gọi API thực tế từ routes/documents.js)
-                document.getElementById("document-title").textContent = "Tài liệu mẫu";
-                document.getElementById("document-description").textContent = "Đây là mô tả của tài liệu mẫu.";
+      async function fetchDocumentAndRatings() {
+        try {
+          document.getElementById("document-title").textContent =
+            "Tài liệu mẫu";
+          document.getElementById("document-description").textContent =
+            "Đây là mô tả của tài liệu mẫu.";
 
-                // Lấy danh sách đánh giá từ API
-                const response = await fetch(`http://localhost:3000/ratings?documentId=${documentId}`);
-                console.log('API response status:', response.status); // Thêm log để kiểm tra trạng thái
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.log('API error response:', errorData); // Thêm log để kiểm tra lỗi
-                    throw new Error(errorData.message || "Lỗi khi lấy đánh giá");
-                }
-                const ratings = await response.json();
-                console.log('Ratings received:', ratings); // Thêm log để kiểm tra dữ liệu trả về
+          const response = await fetch(
+            `http://localhost:3000/ratings?documentId=${documentId}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log("API response status:", response.status);
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.log("API error response:", errorData);
+            throw new Error(errorData.message || "Lỗi khi lấy đánh giá");
+          }
+          const ratings = await response.json();
+          console.log("Ratings received:", ratings);
 
-                const ratingsContainer = document.getElementById("ratings-container");
-                ratingsContainer.innerHTML = ""; // Đã sửa lỗi cú pháp từ inner trustsHTML
+          const ratingsContainer = document.getElementById("ratings-container");
+          ratingsContainer.innerHTML = "";
 
-                if (ratings.message === "No ratings found for this document") {
-                    ratingsContainer.innerHTML = "<p>Chưa có đánh giá nào.</p>";
-                } else {
-                    ratings.forEach(rating => {
-                        const ratingElement = document.createElement("div");
-                        ratingElement.classList.add("rating-item");
-                        ratingElement.innerHTML = `
-                            <div class="user-avatar">${rating.userId.charAt(0).toUpperCase()}</div>
+          if (ratings.message === "No ratings found for this document") {
+            ratingsContainer.innerHTML = "<p>Chưa có đánh giá nào.</p>";
+          } else {
+            ratings.forEach((rating) => {
+              const ratingElement = document.createElement("div");
+              ratingElement.classList.add("rating-item");
+              ratingElement.innerHTML = `
+                            <div class="user-avatar">${rating.userId
+                              .charAt(0)
+                              .toUpperCase()}</div>
                             <div class="rating-content">
                                 <div class="user-name">${rating.userId}</div>
-                                <div class="stars">${displayStars(rating.rating)}</div>
+                                <div class="stars">${displayStars(
+                                  rating.rating
+                                )}</div>
                                 <p>${rating.review}</p>
                             </div>
                         `;
-                        ratingsContainer.appendChild(ratingElement);
-                    });
-                }
+              ratingsContainer.appendChild(ratingElement);
+            });
+          }
 
-                // Hiển thị tổng số lượng đánh giá
-                const totalRatings = ratings.message === "No ratings found for this document" ? 0 : ratings.length;
-                document.getElementById("total-ratings").textContent = `${totalRatings} đánh giá`;
-            } catch (error) {
-                console.error("Lỗi khi lấy dữ liệu:", error);
-                document.getElementById("ratings-container").innerHTML = `<p>Lỗi khi lấy đánh giá: ${error.message}</p>`;
-            }
+          const totalRatings =
+            ratings.message === "No ratings found for this document"
+              ? 0
+              : ratings.length;
+          document.getElementById(
+            "total-ratings"
+          ).textContent = `${totalRatings} đánh giá`;
+        } catch (error) {
+          console.error("Lỗi khi lấy dữ liệu:", error);
+          document.getElementById(
+            "ratings-container"
+          ).innerHTML = `<p>Lỗi khi lấy đánh giá: ${error.message}</p>`;
+        }
+      }
+
+      async function submitRating() {
+        const rating = document.getElementById("rating-score").value;
+        const review = document.getElementById("rating-comment").value.trim();
+
+        document.getElementById("score-error").style.display = "none";
+        document.getElementById("comment-error").style.display = "none";
+
+        let hasError = false;
+        if (!rating) {
+          document.getElementById("score-error").style.display = "block";
+          hasError = true;
+        }
+        if (!review) {
+          document.getElementById("comment-error").style.display = "block";
+          hasError = true;
         }
 
-        // Hàm gửi đánh giá mới
-        async function submitRating() {
-            const rating = document.getElementById("rating-score").value;
-            const review = document.getElementById("rating-comment").value.trim();
+        if (hasError) return;
 
-            // Reset thông báo lỗi
-            document.getElementById("score-error").style.display = "none";
-            document.getElementById("comment-error").style.display = "none";
+        try {
+          const response = await fetch("http://localhost:3000/ratings/add", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: userId,
+              documentId: documentId,
+              rating: parseInt(rating),
+              review: review,
+            }),
+          });
 
-            // Kiểm tra dữ liệu đầu vào
-            let hasError = false;
-            if (!rating) {
-                document.getElementById("score-error").style.display = "block";
-                hasError = true;
-            }
-            if (!review) {
-                document.getElementById("comment-error").style.display = "block";
-                hasError = true;
-            }
+          console.log("Submit rating response status:", response.status);
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.log("Submit rating error response:", errorData);
+            throw new Error(errorData.message || "Lỗi khi gửi đánh giá");
+          }
 
-            if (hasError) return;
-
-            try {
-                const response = await fetch("http://localhost:3000/ratings/add", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        userId: userId,
-                        documentId: documentId,
-                        rating: parseInt(rating),
-                        review: review,
-                    }),
-                });
-
-                console.log('Submit rating response status:', response.status); // Thêm log để kiểm tra trạng thái
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.log('Submit rating error response:', errorData); // Thêm log để kiểm tra lỗi
-                    throw new Error(errorData.message || "Lỗi khi gửi đánh giá");
-                }
-
-                alert("Đánh giá đã được gửi thành công!");
-                document.getElementById("rating-score").value = "";
-                document.getElementById("rating-comment").value = "";
-                fetchDocumentAndRatings(); // Tải lại danh sách đánh giá
-            } catch (error) {
-                console.error("Lỗi khi gửi đánh giá:", error);
-                alert(`Lỗi khi gửi đánh giá: ${error.message}`);
-            }
+          alert("Đánh giá đã được gửi thành công!");
+          document.getElementById("rating-score").value = "";
+          document.getElementById("rating-comment").value = "";
+          fetchDocumentAndRatings();
+        } catch (error) {
+          console.error("Lỗi khi gửi đánh giá:", error);
+          alert(`Lỗi khi gửi đánh giá: ${error.message}`);
         }
+      }
 
-        // Gọi hàm để tải dữ liệu khi trang được tải
-        window.onload = fetchDocumentAndRatings;
+      window.onload = fetchDocumentAndRatings;
     </script>
-</body>
+  </body>
 </html>

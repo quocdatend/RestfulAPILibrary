@@ -551,6 +551,7 @@
                     resetForm();
                     fetchDocuments();
                     alert(`Document ${isEditing ? 'updated' : 'created'} successfully!`);
+                      location.reload();
                 } else {
                     alert(data.message || 'An error occurred');
                 }
@@ -628,6 +629,7 @@
                 if (data.success) {
                     fetchDocuments();
                     alert('Document deleted successfully!');
+                    location.reload();
                 } else {
                     alert(data.message || 'An error occurred');
                 }
