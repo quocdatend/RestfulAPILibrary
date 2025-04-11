@@ -17,6 +17,33 @@
         object-fit: contain;
         border: 1px solid #e2e8f0;
       }
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .pagination button {
+        padding: 8px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        background-color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      .pagination button:hover {
+        background-color: #e2e8f0;
+      }
+      .pagination button:disabled {
+        background-color: #f1f1f1;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+      .pagination span {
+        font-size: 1rem;
+        color: #4a5568;
+      }
     </style>
   </head>
   <body class="bg-gray-50">
@@ -35,15 +62,15 @@
             </a>
           </li>
           <li>
-            <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
+            <a href="#" id="university-filter" class="flex items-center text-gray-700 hover:text-blue-600">
               <i class="fas fa-graduation-cap mr-2"></i>
               <span>Đại học</span>
             </a>
           </li>
           <li>
-            <a href="#" class="flex items-center text-gray-700 hover:text-blue-600">
+            <a href="#" id="grade3-filter" class="flex items-center text-gray-700 hover:text-blue-600">
               <i class="fas fa-school mr-2"></i>
-              <span>Trung học</span>
+              <span>Trung học (Grade 3)</span>
             </a>
           </li>
           <li>
@@ -64,13 +91,13 @@
             id="login-btn"
             class="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-            
+            <i class="fas fa-sign-in-alt mr-2"></i> Đăng nhập
           </button>
           <button
             id="register-btn"
             class="flex items-center px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded hover:bg-blue-50"
           >
-            
+            <i class="fas fa-user-plus mr-2"></i> Đăng ký
           </button>
         </div>
       </div>
@@ -117,8 +144,7 @@
               class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="newest">Mới nhất</option>
-              <option value="popular">Phổ biến</option>
-              <option value="rating">Đánh giá cao</option>
+              <option value="oldest">Cũ nhất</option>
             </select>
             <button
               id="reset-filters"
@@ -135,6 +161,9 @@
 
       <!-- Documents List from API -->
       <div id="documents-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+      <!-- Pagination -->
+      <div id="pagination" class="pagination"></div>
     </main>
 
     <!-- Footer -->
@@ -215,8 +244,6 @@
       </div>
     </div>
 
-
-
     <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
     <script>
@@ -233,6 +260,8 @@
       let pdfDoc = null;
       const modalCanvas = document.getElementById("pdf-modal-canvas");
       const ctx = modalCanvas.getContext("2d");
+      const ITEMS_PER_PAGE = 12;
+      let currentPaginationPage = 1;
 
       // Hàm fetch educations từ API
       async function fetchEducations() {
@@ -346,10 +375,9 @@
           const data = await response.json();
           if (data.success && data.data.length > 0) {
             allDocuments = data.data;
-            console.log("Dữ liệu tài liệu:", allDocuments); // Debug dữ liệu tài liệu
+            console.log("Dữ liệu tài liệu:", allDocuments);
             fetchCategories();
             fetchEducations();
-            displayDocuments(allDocuments);
             filterDocuments();
           } else {
             document.getElementById("documents-list").innerHTML =
@@ -362,17 +390,22 @@
         }
       }
 
-      // Hàm hiển thị danh sách tài liệu
+      // Hàm hiển thị danh sách tài liệu với phân trang
       function displayDocuments(documents) {
         const container = document.getElementById("documents-list");
         container.innerHTML = "";
 
         if (documents.length === 0) {
           container.innerHTML = '<p class="text-gray-600 col-span-3 text-center">Không tìm thấy tài liệu phù hợp</p>';
+          updatePagination(0);
           return;
         }
 
-        documents.forEach((doc) => {
+        const startIndex = (currentPaginationPage - 1) * ITEMS_PER_PAGE;
+        const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, documents.length);
+        const paginatedDocuments = documents.slice(startIndex, endIndex);
+
+        paginatedDocuments.forEach((doc) => {
           const docElement = document.createElement("div");
           docElement.className = "bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow";
 
@@ -405,6 +438,8 @@
           container.appendChild(docElement);
           generateThumbnail(doc.file_url, docElement.querySelector(".thumbnail-container"));
         });
+
+        updatePagination(documents.length);
       }
 
       // Hàm tạo thumbnail cho PDF
@@ -438,6 +473,42 @@
           });
       }
 
+      // Hàm cập nhật phân trang
+      function updatePagination(totalItems) {
+        const paginationContainer = document.getElementById("pagination");
+        paginationContainer.innerHTML = "";
+
+        const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+        if (totalPages <= 1) return;
+
+        const prevButton = document.createElement("button");
+        prevButton.textContent = "Trước";
+        prevButton.disabled = currentPaginationPage === 1;
+        prevButton.addEventListener("click", () => {
+          if (currentPaginationPage > 1) {
+            currentPaginationPage--;
+            filterDocuments();
+          }
+        });
+        paginationContainer.appendChild(prevButton);
+
+        const pageInfo = document.createElement("span");
+        pageInfo.textContent = `Trang ${currentPaginationPage} / ${totalPages}`;
+        paginationContainer.appendChild(pageInfo);
+
+        const nextButton = document.createElement("button");
+        nextButton.textContent = "Sau";
+        nextButton.disabled = currentPaginationPage === totalPages;
+        nextButton.addEventListener("click", () => {
+          if (currentPaginationPage < totalPages) {
+            currentPaginationPage++;
+            filterDocuments();
+          }
+        });
+        paginationContainer.appendChild(nextButton);
+      }
+
       // Hàm filter documents
       function filterDocuments() {
         const searchTerm = document.getElementById("search-input").value.toLowerCase();
@@ -449,19 +520,15 @@
         console.log("Bộ lọc:", { searchTerm, categoryFilter, educationFilter, subjectFilter, sortFilter });
 
         let filtered = allDocuments.filter((doc) => {
-          // Filter theo search term
           const matchesSearch =
             doc.title.toLowerCase().includes(searchTerm) ||
             (doc.description && doc.description.toLowerCase().includes(searchTerm));
 
-          // Filter theo category
           const matchesCategory =
             !categoryFilter || (doc.category_id && doc.category_id._id === categoryFilter);
 
-          // Filter theo education (cấp học)
           let matchesEducation = true;
           if (educationFilter) {
-            // Tìm môn học của tài liệu trong danh sách educations
             const subjectId = doc.subject ? doc.subject._id : null;
             if (subjectId) {
               const education = allEducations.find(edu =>
@@ -469,11 +536,10 @@
               );
               matchesEducation = !!education;
             } else {
-              matchesEducation = false; // Không có subject thì không khớp education
+              matchesEducation = false;
             }
           }
 
-          // Filter theo subject (môn học)
           const matchesSubject =
             !subjectFilter || (doc.subject && doc.subject._id === subjectFilter);
 
@@ -482,22 +548,17 @@
 
         console.log("Kết quả lọc:", filtered);
 
-        // Sắp xếp kết quả
         switch (sortFilter) {
           case "newest":
             filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             break;
-          case "popular":
-            filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
-            break;
-          case "rating":
-            filtered.sort((a, b) => (b.rating_avg || 0) - (a.rating_avg || 0));
+          case "oldest":
+            filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
             break;
         }
 
         displayDocuments(filtered);
 
-        // Hiển thị số lượng kết quả
         const resultsCount = document.getElementById("search-results-count");
         resultsCount.classList.remove("hidden");
         resultsCount.innerHTML = `Tìm thấy <span class="font-semibold">${filtered.length}</span> kết quả`;
@@ -620,7 +681,31 @@
         document.getElementById("subject-filter").value = "";
         document.getElementById("subject-filter").disabled = true;
         document.getElementById("sort-filter").value = "newest";
+        currentPaginationPage = 1;
         filterDocuments();
+      });
+
+      // Lọc theo cấp học từ header
+      document.getElementById("university-filter").addEventListener("click", function(e) {
+        e.preventDefault();
+        const universityEducation = allEducations.find(edu => edu.name.toLowerCase().includes("university"));
+        if (universityEducation) {
+          document.getElementById("education-filter").value = universityEducation._id;
+          updateSubjectFilter(universityEducation._id);
+          currentPaginationPage = 1;
+          filterDocuments();
+        }
+      });
+
+      document.getElementById("grade3-filter").addEventListener("click", function(e) {
+        e.preventDefault();
+        const grade3Education = allEducations.find(edu => edu.name.toLowerCase().includes("grade 3"));
+        if (grade3Education) {
+          document.getElementById("education-filter").value = grade3Education._id;
+          updateSubjectFilter(grade3Education._id);
+          currentPaginationPage = 1;
+          filterDocuments();
+        }
       });
 
       // Tải dữ liệu khi trang tải xong
