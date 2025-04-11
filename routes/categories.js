@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const categoryControllers = require('../controllers/categories');
-// const { check_authentication } = require("../utils/check_auth");
+let { check_authentication, check_authorization, check_authenticationAdmin, check_authorizationAdmin } = require("../utils/check_auth");
+let constants = require('../utils/constants')
 
 // Lấy danh sách tất cả danh mục
 router.get('/', async function (req, res, next) {
@@ -30,7 +31,7 @@ router.get('/:id', async function (req, res, next) {
 });
 
 // Tạo mới một danh mục
-router.post('/', async function (req, res, next) {
+router.post('/', check_authenticationAdmin, check_authorizationAdmin(constants.ADMIN_PERMISSION), async function (req, res, next) {
   try {
     let { name, description } = req.body;
     let newCategory = await categoryControllers.createCategory(name, description);
@@ -47,7 +48,7 @@ router.post('/', async function (req, res, next) {
 });
 
 // Cập nhật danh mục
-router.put('/:id', async function (req, res, next) {
+router.put('/:id', check_authenticationAdmin, check_authorizationAdmin(constants.ADMIN_PERMISSION), async function (req, res, next) {
   try {
     let updatedCategory = await categoryControllers.updateCategory(req.params.id, req.body);
     res.status(200).send({
@@ -60,7 +61,7 @@ router.put('/:id', async function (req, res, next) {
 });
 
 // Xóa danh mục (soft delete)
-router.delete('/:id', async function (req, res, next) {
+router.delete('/:id',check_authenticationAdmin, check_authorizationAdmin(constants.ADMIN_PERMISSION), async function (req, res, next) {
   try {
     let deletedCategory = await categoryControllers.deleteCategory(req.params.id);
     res.status(200).send({
