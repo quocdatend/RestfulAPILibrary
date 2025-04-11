@@ -202,8 +202,7 @@
 
       <div class="ratings-list">
         <h2>Đánh giá từ người dùng</h2>
-        <div id="ratings-container">
-        </div>
+        <div id="ratings-container"></div>
       </div>
 
       <div class="rating-form">
@@ -237,14 +236,20 @@
         <button onclick="submitRating()">Gửi đánh giá</button>
       </div>
     </div>
-
+    <div style="margin-bottom: 20px">
+      <a
+        href="http://localhost:5501/FONT_END_DOCUMENT/Documents/documents.html"
+        style="text-decoration: none; color: #007bff; font-weight: bold"
+      >
+        <i class="fas fa-arrow-left"></i> Quay lại danh sách tài liệu
+      </a>
+    </div>
     <script>
-      
       const urlParams = new URLSearchParams(window.location.search);
-      const documentId = urlParams.get("documentId") || "123"; 
-      console.log("Document ID:", documentId); 
+      const documentId = urlParams.get("documentId") || "123";
+      console.log("Document ID:", documentId);
 
-      const userId = "user123"; 
+      const userId = "user123";
 
       const token = localStorage.getItem("token");
 
@@ -292,7 +297,7 @@
             {
               method: "GET",
               headers: {
-                "Authorization": `Bearer ${token}`,
+                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
               },
             }
@@ -369,7 +374,7 @@
           const response = await fetch("http://localhost:3000/ratings/add", {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${token}`,
+              Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -383,7 +388,7 @@
           console.log("Submit rating response status:", response.status);
           if (!response.ok) {
             const errorData = await response.json();
-            console.log("Submit rating error response:", errorData); 
+            console.log("Submit rating error response:", errorData);
             throw new Error(errorData.message || "Lỗi khi gửi đánh giá");
           }
 
