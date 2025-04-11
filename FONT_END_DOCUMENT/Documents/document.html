@@ -465,7 +465,7 @@
     if (documentId) {
       // Set up the comment link with the document ID
       const commentLink = document.getElementById('document-comment-link');
-      commentLink.href = `http://localhost:3000/ratings?documentId=${documentId}`;
+      commentLink.href = `http://127.0.0.1:5501/FONT_END_DOCUMENT/Rates/userrating.html?documentId=${documentId}`;
       
       fetch(`http://localhost:3000/documents/${documentId}`)
         .then(response => response.json())

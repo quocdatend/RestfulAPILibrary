@@ -236,19 +236,10 @@
         <button onclick="submitRating()">Gửi đánh giá</button>
       </div>
     </div>
-    <div style="margin-bottom: 20px">
-      <a
-        href="http://localhost:5501/FONT_END_DOCUMENT/Documents/documents.html"
-        style="text-decoration: none; color: #007bff; font-weight: bold"
-      >
-        <i class="fas fa-arrow-left"></i> Quay lại danh sách tài liệu
-      </a>
-    </div>
     <script>
       const urlParams = new URLSearchParams(window.location.search);
       const documentId = urlParams.get("documentId") || "123";
       console.log("Document ID:", documentId);
-
       const userId = "user123";
 
       const token = localStorage.getItem("token");
