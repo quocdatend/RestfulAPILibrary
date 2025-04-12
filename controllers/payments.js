@@ -1,4 +1,5 @@
 const PaymentService = require('../services/payments');
+const userService = require('../services/users');
 
 class PaymentController {
   // Create a new payment
@@ -43,7 +44,8 @@ class PaymentController {
       }
       
       const result = await PaymentService.executePayPalPayment(token, PayerID);
-      
+      const user = await userService.getUserById(result.user_id);
+      await userService.updateRoleToPremium(user);
       // Redirect to client success page with transaction info
       return res.redirect(`${process.env.CLIENT_URL}/payment/success?transactionId=${result.transaction_id}`);
     } catch (error) {
