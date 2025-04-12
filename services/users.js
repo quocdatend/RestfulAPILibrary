@@ -80,5 +80,14 @@ module.exports = {
         } else {
             throw new Error("old password khong dung")
         }
+    },
+    updateRoleToPremium: async function (user) {
+        let role = await roleSchema.findOne({ name: 'pre' })
+        if (role) {
+            user.role = role._id
+            return await user.save()
+        } else {
+            throw new Error('role khong ton tai')
+        }
     }
 }

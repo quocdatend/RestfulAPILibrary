@@ -5,7 +5,7 @@ const ratingsController = require('../controllers/ratings');
 const constants = require('../utils/constants');
 
 router.get('/', ratingsController.getAllRatings);
-router.post('/add', check_authentication, check_authorization(constants.USER_PERMISSION), ratingsController.addRating);
-router.delete('/:id', check_authentication, check_authorization(constants.USER_PERMISSION), ratingsController.deleteRating);
+router.post('/add', check_authentication, check_authorization(constants.PREMIUM_PERMISSION), ratingsController.addRating);
+router.delete('/:id', check_authentication, check_authorization(constants.PREMIUM_PERMISSION), ratingsController.deleteRating);
 
 module.exports = router;

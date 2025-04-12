@@ -237,6 +237,104 @@
       </div>
     </div>
     <script>
+      async function checkUserPermission() {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          alert("Vui lòng đăng nhập để tiếp tục!");
+          window.location.href =
+            "http://127.0.0.1:5501/FONT_END_DOCUMENT/User/login.html";
+          return;
+        }
+
+        try {
+          const response = await fetch("http://localhost:3000/auth/me", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Không thể xác thực người dùng.");
+          }
+
+          const result = await response.json();
+
+          if (result.success && result.data && result.data.role) {
+            const roleName = result.data.role.name;
+
+            if (roleName === "user") {
+              const agree = confirm(
+                "Vui lòng mua dịch vụ để tiếp tục sử dụng!\nBạn có muốn thanh toán ngay không?"
+              );
+
+              if (!agree) {
+                // Nếu tab được mở bằng window.open, thì có thể tự đóng
+                window.close();
+                return;
+              }
+              const paymentData = {
+                payment_amount: 10,
+                currency: "USD",
+                description: "abc",
+                user_id: result.data._id,
+                order_id: "test",
+              };
+              try {
+                const paymentRes = await fetch(
+                  "http://localhost:3000/RestAPIRestaurant/payments/initiate",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(paymentData),
+                  }
+                );
+
+                if (!paymentRes.ok) {
+                  throw new Error("Không thể khởi tạo thanh toán.");
+                }
+
+                const paymentResult = await paymentRes.json();
+
+                if (
+                  paymentResult &&
+                  paymentResult.paymentId &&
+                  paymentResult.approvalUrl
+                ) {
+                  // Mở trang mới để thực hiện thanh toán
+                  window.open(paymentResult.approvalUrl, "_blank");
+                } else {
+                  alert("Không lấy được thông tin thanh toán.");
+                }
+              } catch (error) {
+                console.error("Lỗi khi khởi tạo thanh toán:", error);
+                alert("Đã xảy ra lỗi khi xử lý thanh toán.");
+              }
+
+              return;
+            } else if (roleName === "pre") {
+              console.log("Người dùng có quyền PRE - tiếp tục xử lý...");
+              // Gọi các hàm xử lý tiếp theo ở đây
+            } else {
+              alert("Không đủ quyền truy cập.");
+            }
+          } else {
+            alert("Không lấy được thông tin người dùng.");
+          }
+        } catch (error) {
+          console.error("Lỗi khi kiểm tra quyền người dùng:", error);
+          alert("Đã xảy ra lỗi khi xác minh. Vui lòng đăng nhập lại.");
+          localStorage.removeItem("token");
+          window.location.href =
+            "http://127.0.0.1:5501/FONT_END_DOCUMENT/User/login.html";
+        }
+      }
+
       const urlParams = new URLSearchParams(window.location.search);
       const documentId = urlParams.get("documentId") || "123";
       console.log("Document ID:", documentId);
@@ -343,6 +441,7 @@
       }
 
       async function submitRating() {
+        checkUserPermission();
         const rating = document.getElementById("rating-score").value;
         const review = document.getElementById("rating-comment").value.trim();
 
