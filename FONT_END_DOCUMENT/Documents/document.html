@@ -292,9 +292,9 @@
         </li>
       </ul>
       <div class="flex space-x-3">
-        <button id="login-btn" class="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-          <i class="fas fa-sign-in-alt mr-2"></i>
-          <span>Đăng nhập</span>
+        <button id="login-btn" class="flex items-center px-4 py-2 text-white rounded">
+          <i class="fas mr-2" id="login-icon"></i>
+          <span id="login-text"></span>
         </button>
       </div>
     </div>
@@ -366,6 +366,40 @@
   </div>
 
   <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const loginBtn = document.getElementById("login-btn");
+    const loginText = document.getElementById("login-text");
+    const loginIcon = document.getElementById("login-icon");
+
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      // Đã đăng nhập
+      loginBtn.classList.add("bg-red-600", "hover:bg-red-700");
+      loginBtn.classList.remove("bg-blue-600", "hover:bg-blue-700");
+
+      loginText.textContent = "Đăng Xuất";
+      loginIcon.classList.add("fa-sign-out-alt");
+      loginIcon.classList.remove("fa-sign-in-alt");
+
+      loginBtn.addEventListener("click", function () {
+        localStorage.removeItem("token");
+        window.location.href = "http://127.0.0.1:5501/FONT_END_DOCUMENT/login_admin.html";
+      });
+    } else {
+      // Chưa đăng nhập
+      loginBtn.classList.add("bg-blue-600", "hover:bg-blue-700");
+      loginBtn.classList.remove("bg-red-600", "hover:bg-red-700");
+
+      loginText.textContent = "Đăng Nhập";
+      loginIcon.classList.add("fa-sign-in-alt");
+      loginIcon.classList.remove("fa-sign-out-alt");
+
+      loginBtn.addEventListener("click", function () {
+        window.location.href = "http://127.0.0.1:5501/FONT_END_DOCUMENT/login_admin.html";
+      });
+    }
+  });
     // Extract the document ID from the URL query string
     const urlParams = new URLSearchParams(window.location.search);
     const documentId = urlParams.get('id');

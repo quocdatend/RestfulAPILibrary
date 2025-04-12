@@ -95,16 +95,11 @@
   </head>
   <body>
     <div class="card">
-      <h2>Login Now</h2>
+      <h2>Login Admin</h2>
       <input type="text" id="username" placeholder="Username" />
       <input type="password" id="password" placeholder="Password" />
       <button class="btn" onclick="handleLogin()">Login</button>
-      <div class="forgot-link">
-        <a href="confirm_password.html">Forgot Password?</a>
-      </div>
-      <div class="toggle-link">
-        Don’t have an account? <a href="signup.html">Sign Up</a>
-      </div>
+      
     </div>
     <div id="toast" class="toast hidden">Login successful!</div>
     <script>
@@ -131,7 +126,7 @@
               localStorage.setItem("token", data.data);
             }
             showToast("success", "Login successful!");
-            window.location.href = 'http://127.0.0.1:5501/FONT_END_DOCUMENT/Rates/adminratings.html';
+            window.location.href = 'http://127.0.0.1:5501/FONT_END_DOCUMENT/Documents/admin/docAdmin.html';
           } else {
             showToast("error", data.message || "Login failed");
           }
