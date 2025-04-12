@@ -14,7 +14,7 @@
     </head>
     <body class="bg-gray-100">
         <nav class="bg-indigo-600 text-white shadow-lg">
-            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
                 <a href="/" class="text-2xl font-bold">Document Manager</a>
                 <div class="relative">
                     <button id="menuButton" class="flex items-center gap-2 hover:text-indigo-200 transition duration-300">
@@ -34,6 +34,9 @@
                         <a href="/FONT_END_DOCUMENT/Documents/admin/category.html"
                             class="block px-4 py-2 hover:bg-indigo-100">Quản lý Danh mục</a>
                     </div>
+                </div>
+                <div>
+                    <a href="/FONT_END_DOCUMENT/Rates/adminratings.html">Quản lý Rating</a>
                 </div>
                 <button id="logoutBtn"
                     class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition duration-300 ml-4">Đăng xuất</button>
@@ -201,12 +204,19 @@
         </div>
 
         <script>
-            const token = localStorage.getItem("token");
+            document.getElementById("logoutBtn").addEventListener("click", function () {
+    // Xóa token hoặc thông tin người dùng khỏi localStorage
+    localStorage.removeItem("token"); // hoặc tên khác nếu bạn dùng ví dụ: "adminToken", "accessToken", ...
+
+    // Chuyển hướng về trang đăng nhập admin
+    window.location.href = "http://127.0.0.1:5501/FONT_END_DOCUMENT/login_admin.html";
+  });
         const cloudinaryConfig = {
             cloudName: 'dap6ivvwp', 
             apiKey: '875469923979388',
             apiSecret: 'sT_lEC69UilqcB6NB6Fhn6kaZqU'
         };
+        const token = localStorage.getItem("token");
         let categories = [];
         let educations = [];
         let documents = [];
@@ -267,12 +277,12 @@
             const token = getToken();
             if (!token) {
                 alert('Please login first');
-                window.location.href = '/login';
+                window.location.href = 'http://127.0.0.1:5501/FONT_END_DOCUMENT/login_admin.html';
                 return;
             }
 
             try {
-                const response = await fetch('http://localhost:3000/auth/me', {
+                const response = await fetch('http://localhost:3000/admins', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -287,7 +297,7 @@
             } catch (error) {
                 console.error('Error fetching user:', error);
                 alert('Authentication failed. Please login again.');
-                window.location.href = '/login';
+                window.location.href = 'http://127.0.0.1:5501/FONT_END_DOCUMENT/login_admin.html';
                 return false;
             }
         }
